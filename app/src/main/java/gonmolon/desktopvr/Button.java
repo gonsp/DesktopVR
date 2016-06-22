@@ -2,10 +2,11 @@ package gonmolon.desktopvr;
 
 public class Button extends Model {
 
+    private static final String SHADER_NAME = "Button";
     private VRListener listener;
 
-    public Button() {
-
+    public Button(VRView vrView) {
+        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.passthrough_fragment);
     }
 
     public void setVRListener(VRListener listener) {
@@ -31,5 +32,10 @@ public class Button extends Model {
         if(listener != null) {
             listener.onClick(); //Param relative position
         }
+    }
+
+    @Override
+    protected void draw(float[] modelView, float[] modelViewProjection) {
+
     }
 }

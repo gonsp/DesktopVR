@@ -2,10 +2,11 @@ package gonmolon.desktopvr;
 
 public class Window extends Model{
 
+    private static final String SHADER_NAME = "Window";
     private String name;
 
-    public Window(String namme) {
-        super();
+    public Window(String name, VRView vrView) {
+        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.passthrough_fragment);
         this.name = name;
     }
 
@@ -21,6 +22,11 @@ public class Window extends Model{
 
     @Override
     public void onLongLooking() {
+
+    }
+
+    @Override
+    protected void draw(float[] modelView, float[] modelViewProjection) {
 
     }
 }
