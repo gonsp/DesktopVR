@@ -1,13 +1,18 @@
 package gonmolon.desktopvr;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.vr.sdk.base.GvrActivity;
+
+public class MainActivity extends GvrActivity {
+
+    private VRView vrView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        vrView = (VRView) findViewById(R.id.VR_panel);
+        setGvrView(vrView);
     }
 }
