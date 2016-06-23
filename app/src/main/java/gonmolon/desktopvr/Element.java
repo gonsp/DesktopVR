@@ -14,14 +14,19 @@ public abstract class Element implements VRListener {
     protected VRView vrView;
 
     protected int shaderID = -1;
-    protected float[] model;
     private boolean clickable = true;
+    private boolean looking = false;
+
+    protected float[] model;
+    protected float[] modelView;
+    protected float[] modelViewProjection;
 
     protected FloatBuffer vertices;
-    protected float[] COORDS;
     protected FloatBuffer colors;
-    protected float[] COLORS;
     protected FloatBuffer normals;
+
+    protected float[] COORDS;
+    protected float[] COLORS;
     protected float[] NORMALS;
 
     protected int elementPositionParam;
@@ -40,6 +45,10 @@ public abstract class Element implements VRListener {
         }
 
         model = new float[16];
+        modelView = new float[16];
+        modelViewProjection = new float[16];
+        Matrix.setIdentityM(model, 0);
+
         this.COORDS = COORDS;
         this.NORMALS = NORMALS;
         this.COLORS = COLORS;
@@ -62,25 +71,9 @@ public abstract class Element implements VRListener {
         VRView.checkGLError(shaderName);
     }
 
-    public boolean isLooking() { //Param view direction
-        boolean looking = true; //TODO implement this
-        if(looking) {
-            onLooking();
-        }
-        return looking;
-    }
-
-    public void setClick() {
-        if(clickable) {
-            onClick();
-        }
-    }
-
     public void draw(float[] perspective) {
         GLES20.glUseProgram(shaderID);
 
-        float[] modelView = new float[16];
-        float[] modelViewProjection = new float[16];
         Matrix.multiplyMM(modelView, 0, vrView.view, 0, model, 0);
         Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelView, 0);
 
@@ -111,14 +104,40 @@ public abstract class Element implements VRListener {
         return buffer;
     }
 
+    public boolean isLookingAt(float[] headView) {
+        float[] tempPosition = new float[4];
+
+        Matrix.multiplyMM(modelView, 0, headView, 0, model, 0);
+        Matrix.multiplyMV(tempPosition, 0, modelView, 0, VRView.POS_MATRIX_MULTIPLY_VEC, 0);
+
+        float pitch = (float) Math.atan2(tempPosition[1], -tempPosition[2]);
+        float yaw = (float) Math.atan2(tempPosition[0], -tempPosition[2]);
+
+        boolean aux = Math.abs(pitch) < 0.12f && Math.abs(yaw) < 0.12f;
+        if(!looking && aux) {
+            onStartLooking();
+        } else if(looking && !aux) {
+            onStopLooking();
+        }
+        looking = aux;
+
+        return looking;
+    }
+
     public void move(float x, float y, float z) {
-        Matrix.setIdentityM(model, 0);
         Matrix.translateM(model, 0, x, y, z);
     }
 
     protected void scale(float width, float height) {
-        Matrix.setIdentityM(model, 0);
-        Matrix.scaleM(model, 0, width, height, 0);
+        Matrix.scaleM(model, 0, width, height, 1);
+    }
+
+    public float[] getModel() {
+        return model;
+    }
+
+    public float[] getModelView() {
+        return modelView;
     }
 
     public boolean isClickable() {

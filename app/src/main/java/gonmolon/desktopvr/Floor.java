@@ -1,6 +1,8 @@
 package gonmolon.desktopvr;
 
 
+import android.util.Log;
+
 public class Floor extends Element {
 
     private static final String SHADER_NAME = "Floor";
@@ -10,6 +12,12 @@ public class Floor extends Element {
     public Floor(VRView vrView) {
         super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.grid_fragment, COORDS, NORMALS, COLORS);
         move(0, -floorDepth, 0);
+        setClickable(false);
+    }
+
+    @Override
+    public boolean isLookingAt(float[] headview) {
+        return false;
     }
 
     public static final float[] COORDS = new float[] {
@@ -104,7 +112,10 @@ public class Floor extends Element {
     public void onClick() {}
 
     @Override
-    public void onLooking() {}
+    public void onStartLooking() {}
+
+    @Override
+    public void onStopLooking() {}
 
     @Override
     public void onLongLooking() {}

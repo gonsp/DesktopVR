@@ -14,10 +14,15 @@ public class Button extends Element {
     }
 
     @Override
-    public void onLooking() {
+    public void onStartLooking() {
         if(listener != null) {
-            listener.onLooking(); //Param relative position
+            listener.onStartLooking(); //Param relative position
         }
+    }
+
+    @Override
+    public void onStopLooking() {
+
     }
 
     @Override

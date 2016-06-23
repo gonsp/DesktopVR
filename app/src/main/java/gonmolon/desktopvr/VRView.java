@@ -12,6 +12,8 @@ import com.google.vr.sdk.base.GvrView;
 import com.google.vr.sdk.base.HeadTransform;
 import com.google.vr.sdk.base.Viewport;
 
+import java.util.Iterator;
+
 import javax.microedition.khronos.egl.EGLConfig;
 
 public class VRView extends GvrView implements GvrView.StereoRenderer {
@@ -19,22 +21,22 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
     private static final String TAG = "GvrView";
     private static final float CAMERA_Z = 0.01f;
     private static final float[] LIGHT_POS_IN_WORLD_SPACE = new float[] {0.0f, 2.0f, 0.0f, 1.0f};
+    protected static final float[] POS_MATRIX_MULTIPLY_VEC = {0, 0, 0, 1.0f};
     private static final float Z_NEAR = 0.1f;
     private static final float Z_FAR = 100.0f;
 
     private GvrAudioEngine vrAudio;
     protected ShaderContainer shaderContainer;
+    private ElementContainer elements;
 
     protected float[] camera;
     private float[] headView;
     protected float[] view;
     protected float[] lightPosInEyeSpace;
 
-    private Floor floor;
-    private Window window;
-
     public VRView(final Context context) {
         super(context);
+
         setEGLConfigChooser(8, 8, 8, 8, 16, 8);
         setRenderer(this);
         setTransitionViewEnabled(true);
@@ -46,12 +48,14 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
                     }
                 }
         );
+
         camera = new float[16];
         headView = new float[16];
         view = new float[16];
         lightPosInEyeSpace = new float[4];
         shaderContainer = new ShaderContainer(context);
         vrAudio = new GvrAudioEngine(context, GvrAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
+        elements = new ElementContainer();
     }
 
     @Override
@@ -71,8 +75,8 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
         Log.i(TAG, "onSurfaceCreated");
         GLES20.glClearColor(0.1f, 0.1f, 0.1f, 0.5f);
 
-        floor = new Floor(this);
-        window = new Window(this, "test", 100, 50, 0, 10, 20);
+        elements.addElement(new Floor(this));
+        elements.addElement(new Window(this, "test", 2.0f, 1.0f, 0.0f, 0.0f, -3.5f));
     }
 
     @Override
@@ -93,8 +97,15 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
         Matrix.multiplyMV(lightPosInEyeSpace, 0, view, 0, LIGHT_POS_IN_WORLD_SPACE, 0);
 
         float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
-        floor.draw(perspective);
-        window.draw(perspective);
+
+        Iterator iterator = elements.getIterator();
+        while(iterator.hasNext()) {
+            Element element = (Element) iterator.next();
+            element.draw(perspective);
+            if(element.isLookingAt(headView)) {
+                //TODO Reticle big
+            }
+        }
     }
 
     @Override
@@ -121,6 +132,12 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
     }
 
     public void onCardboardTrigger() {
-
+        Iterator iterator = elements.getIterator();
+        while(iterator.hasNext()) {
+            Element element = (Element) iterator.next();
+            if(element.isLookingAt(headView)) {
+                element.onClick();
+            }
+        }
     }
 }
