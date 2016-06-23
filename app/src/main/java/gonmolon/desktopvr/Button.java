@@ -1,12 +1,12 @@
 package gonmolon.desktopvr;
 
-public class Button extends Model {
+public class Button extends Element {
 
     private static final String SHADER_NAME = "Button";
     private VRListener listener;
 
     public Button(VRView vrView) {
-        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.passthrough_fragment);
+        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.model_fragment, COORDS, NORMALS, COLORS);
     }
 
     public void setVRListener(VRListener listener) {
@@ -34,8 +34,30 @@ public class Button extends Model {
         }
     }
 
-    @Override
-    protected void draw(float[] modelView, float[] modelViewProjection) {
+    public static final float[] COORDS = new float[]{
+            -1, 1, 0,
+            -1, -1, 0,
+            1, 1, 0,
+            -1, -1, 0,
+            1, -1, 0,
+            1, 1, 0
+    };
 
-    }
+    public static final float[] NORMALS = new float[] {
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+    };
+
+    public static final float[] COLORS = new float[] {
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+    };
 }

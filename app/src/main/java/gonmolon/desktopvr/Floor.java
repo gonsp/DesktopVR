@@ -1,77 +1,18 @@
 package gonmolon.desktopvr;
 
 
-import android.opengl.GLES20;
-import android.opengl.Matrix;
-
-import java.nio.FloatBuffer;
-
-public class Floor extends Model {
+public class Floor extends Element {
 
     private static final String SHADER_NAME = "Floor";
-    private static final int COORDS_PER_VERTEX = 3;
     private static final float floorDepth = 20f;
 
-    private FloatBuffer floorVertices;
-    private FloatBuffer floorColors;
-    private FloatBuffer floorNormals;
-
-    private int floorPositionParam;
-    private int floorNormalParam;
-    private int floorColorParam;
-    private int floorModelParam;
-    private int floorModelViewParam;
-    private int floorModelViewProjectionParam;
-    private int floorLightPosParam;
 
     public Floor(VRView vrView) {
-        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.grid_fragment);
-
-        floorVertices = loadData(FLOOR_COORDS);
-        floorNormals = loadData(FLOOR_NORMALS);
-        floorColors = loadData(FLOOR_COLORS);
-
-        GLES20.glUseProgram(shaderID);
-
-        VRView.checkGLError("Floor shaderID");
-
-        floorModelParam = GLES20.glGetUniformLocation(shaderID, "u_Model");
-        floorModelViewParam = GLES20.glGetUniformLocation(shaderID, "u_MVMatrix");
-        floorModelViewProjectionParam = GLES20.glGetUniformLocation(shaderID, "u_MVP");
-        floorLightPosParam = GLES20.glGetUniformLocation(shaderID, "u_LightPos");
-
-        floorPositionParam = GLES20.glGetAttribLocation(shaderID, "a_Position");
-        floorNormalParam = GLES20.glGetAttribLocation(shaderID, "a_Normal");
-        floorColorParam = GLES20.glGetAttribLocation(shaderID, "a_Color");
-
-        VRView.checkGLError("Floor shaderID params");
-
+        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.grid_fragment, COORDS, NORMALS, COLORS);
         move(0, -floorDepth, 0);
     }
 
-    @Override
-    public void draw(float[] modelView, float[] modelViewProjection) {
-        GLES20.glUseProgram(shaderID);
-
-        // Set ModelView, MVP, position, normals, and color.
-        GLES20.glUniform3fv(floorLightPosParam, 1, vrView.lightPosInEyeSpace, 0);
-        GLES20.glUniformMatrix4fv(floorModelParam, 1, false, model, 0);
-        GLES20.glUniformMatrix4fv(floorModelViewParam, 1, false, modelView, 0);
-        GLES20.glUniformMatrix4fv(floorModelViewProjectionParam, 1, false, modelViewProjection, 0);
-        GLES20.glVertexAttribPointer(floorPositionParam, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, 0, floorVertices);
-        GLES20.glVertexAttribPointer(floorNormalParam, 3, GLES20.GL_FLOAT, false, 0, floorNormals);
-        GLES20.glVertexAttribPointer(floorColorParam, 4, GLES20.GL_FLOAT, false, 0, floorColors);
-
-        GLES20.glEnableVertexAttribArray(floorPositionParam);
-        GLES20.glEnableVertexAttribArray(floorNormalParam);
-        GLES20.glEnableVertexAttribArray(floorColorParam);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 24);
-
-        VRView.checkGLError("drawing floor");
-    }
-
-    public static final float[] FLOOR_COORDS = new float[] {
+    public static final float[] COORDS = new float[] {
             // +X, +Z quadrant
             200, 0, 0,
             0, 0, 0,
@@ -105,7 +46,7 @@ public class Floor extends Model {
             0, 0, 0,
     };
 
-    public static final float[] FLOOR_NORMALS = new float[] {
+    public static final float[] NORMALS = new float[] {
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
@@ -132,7 +73,7 @@ public class Floor extends Model {
             0.0f, 1.0f, 0.0f,
     };
 
-    public static final float[] FLOOR_COLORS = new float[] {
+    public static final float[] COLORS = new float[] {
             0.0f, 0.3398f, 0.9023f, 1.0f,
             0.0f, 0.3398f, 0.9023f, 1.0f,
             0.0f, 0.3398f, 0.9023f, 1.0f,

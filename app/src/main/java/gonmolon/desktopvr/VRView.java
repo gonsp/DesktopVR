@@ -31,6 +31,7 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
     protected float[] lightPosInEyeSpace;
 
     private Floor floor;
+    private Window window;
 
     public VRView(final Context context) {
         super(context);
@@ -71,6 +72,7 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
         GLES20.glClearColor(0.1f, 0.1f, 0.1f, 0.5f);
 
         floor = new Floor(this);
+        window = new Window(this, "test", 100, 50, 0, 10, 20);
     }
 
     @Override
@@ -92,6 +94,7 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
 
         float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
         floor.draw(perspective);
+        window.draw(perspective);
     }
 
     @Override
