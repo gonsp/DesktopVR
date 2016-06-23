@@ -2,6 +2,10 @@ package gonmolon.desktopvr;
 
 import android.opengl.Matrix;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 public abstract class Model implements VRListener {
 
     protected VRView vrView;
@@ -43,7 +47,17 @@ public abstract class Model implements VRListener {
 
     protected abstract void draw(float[] modelView, float[] modelViewProjection);
 
-    public void move(int x, int y, int z) {
+    protected static FloatBuffer loadData(float[] data) {
+        FloatBuffer buffer;
+        ByteBuffer aux = ByteBuffer.allocateDirect(data.length * 4);
+        aux.order(ByteOrder.nativeOrder());
+        buffer = aux.asFloatBuffer();
+        buffer.put(data);
+        buffer.position(0);
+        return buffer;
+    }
+
+    public void move(float x, float y, float z) {
         Matrix.setIdentityM(model, 0);
         Matrix.translateM(model, 0, x, y, z);
     }

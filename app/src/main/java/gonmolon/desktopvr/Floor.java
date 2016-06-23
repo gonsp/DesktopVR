@@ -4,8 +4,6 @@ package gonmolon.desktopvr;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 public class Floor extends Model {
@@ -29,23 +27,9 @@ public class Floor extends Model {
     public Floor(VRView vrView) {
         super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.grid_fragment);
 
-        ByteBuffer bbFloorVertices = ByteBuffer.allocateDirect(FLOOR_COORDS.length * 4);
-        bbFloorVertices.order(ByteOrder.nativeOrder());
-        floorVertices = bbFloorVertices.asFloatBuffer();
-        floorVertices.put(FLOOR_COORDS);
-        floorVertices.position(0);
-
-        ByteBuffer bbFloorNormals = ByteBuffer.allocateDirect(FLOOR_NORMALS.length * 4);
-        bbFloorNormals.order(ByteOrder.nativeOrder());
-        floorNormals = bbFloorNormals.asFloatBuffer();
-        floorNormals.put(FLOOR_NORMALS);
-        floorNormals.position(0);
-
-        ByteBuffer bbFloorColors = ByteBuffer.allocateDirect(FLOOR_COLORS.length * 4);
-        bbFloorColors.order(ByteOrder.nativeOrder());
-        floorColors = bbFloorColors.asFloatBuffer();
-        floorColors.put(FLOOR_COLORS);
-        floorColors.position(0);
+        floorVertices = loadData(FLOOR_COORDS);
+        floorNormals = loadData(FLOOR_NORMALS);
+        floorColors = loadData(FLOOR_COLORS);
 
         GLES20.glUseProgram(shaderID);
 
@@ -62,8 +46,7 @@ public class Floor extends Model {
 
         VRView.checkGLError("Floor shaderID params");
 
-        Matrix.setIdentityM(model, 0);
-        Matrix.translateM(model, 0, 0, -floorDepth, 0);
+        move(0, -floorDepth, 0);
     }
 
     @Override

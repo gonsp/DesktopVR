@@ -30,13 +30,11 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
     protected float[] view;
     protected float[] lightPosInEyeSpace;
 
-
-
-
     private Floor floor;
 
     public VRView(final Context context) {
         super(context);
+        setEGLConfigChooser(8, 8, 8, 8, 16, 8);
         setRenderer(this);
         setTransitionViewEnabled(true);
         setOnCardboardBackButtonListener(
@@ -78,9 +76,7 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
     @Override
     public void onNewFrame(HeadTransform headTransform) {
         Matrix.setLookAtM(camera, 0, 0.0f, 0.0f, CAMERA_Z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
         headTransform.getHeadView(headView, 0);
-
         checkGLError("onReadyToDraw");
     }
 
@@ -111,7 +107,7 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
 
     public static void checkGLError(String label) {
         int error;
-        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+        while((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
             Log.e(TAG, label + ": glError " + error);
             throw new RuntimeException(label + ": glError " + error);
         }

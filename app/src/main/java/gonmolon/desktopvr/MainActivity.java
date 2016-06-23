@@ -15,7 +15,7 @@ public class MainActivity extends GvrActivity {
         setContentView(R.layout.activity_main);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.VR_layout);
-        VRView vrView = new VRView(this);
+        vrView = new VRView(this);
         vrView.setLayoutParams(
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
