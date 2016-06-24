@@ -18,7 +18,7 @@
             android:name="gonmolon.desktopvr.MainActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden">
-0            <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="com.google.intent.category.CARDBOARD" />

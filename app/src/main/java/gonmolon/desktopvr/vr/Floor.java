@@ -1,7 +1,7 @@
-package gonmolon.desktopvr;
+package gonmolon.desktopvr.vr;
 
 
-import android.util.Log;
+import gonmolon.desktopvr.R;
 
 public class Floor extends Element {
 

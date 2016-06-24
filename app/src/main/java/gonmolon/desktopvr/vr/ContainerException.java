@@ -1,4 +1,4 @@
-package gonmolon.desktopvr;
+package gonmolon.desktopvr.vr;
 
 public class ContainerException extends Exception {
 

@@ -1,4 +1,4 @@
-package gonmolon.desktopvr;
+package gonmolon.desktopvr.vr;
 
 import java.util.HashMap;
 import java.util.Iterator;

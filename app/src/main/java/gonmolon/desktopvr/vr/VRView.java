@@ -1,4 +1,4 @@
-package gonmolon.desktopvr;
+package gonmolon.desktopvr.vr;
 
 import android.app.Activity;
 import android.content.Context;

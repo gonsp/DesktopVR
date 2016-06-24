@@ -1,23 +1,30 @@
-package gonmolon.desktopvr;
+package gonmolon.desktopvr.vr;
 
-public class Button extends Element {
+import android.util.Log;
 
-    private static final String SHADER_NAME = "Button";
-    private VRListener listener;
+import gonmolon.desktopvr.R;
 
-    public Button(VRView vrView) {
+public class Window extends Element {
+
+    private static final String SHADER_NAME = "Window";
+    private String name;
+
+    public Window(VRView vrView, String name, float width, float height, float x, float y, float z) {
         super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.model_fragment, COORDS, NORMALS, COLORS);
+        this.name = name;
+
+        scale(width, height);
+        move(x, y, z);
     }
 
-    public void setVRListener(VRListener listener) {
-        this.listener = listener;
+    @Override
+    public void onClick() {
+        Log.d(SHADER_NAME, "TOCADO");
     }
 
     @Override
     public void onStartLooking() {
-        if(listener != null) {
-            listener.onStartLooking(); //Param relative position
-        }
+        Log.d(SHADER_NAME, "HELLOUUUU");
     }
 
     @Override
@@ -27,25 +34,16 @@ public class Button extends Element {
 
     @Override
     public void onLongLooking() {
-        if(listener != null) {
-            listener.onLongLooking(); //Param relative position
-        }
+
     }
 
-    @Override
-    public void onClick() {
-        if(listener != null) {
-            listener.onClick(); //Param relative position
-        }
-    }
-
-    public static final float[] COORDS = new float[]{
-            -1, 1, 0,
-            -1, -1, 0,
-            1, 1, 0,
-            -1, -1, 0,
-            1, -1, 0,
-            1, 1, 0
+    public static final float[] COORDS = new float[] {
+            -1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f
     };
 
     public static final float[] NORMALS = new float[] {

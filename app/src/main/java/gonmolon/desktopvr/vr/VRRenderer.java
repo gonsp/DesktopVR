@@ -11,13 +11,15 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package org.rajawali3d.vr.renderer;
+package gonmolon.desktopvr.vr;
 
 import android.content.Context;
-import com.google.vrtoolkit.cardboard.CardboardView;
-import com.google.vrtoolkit.cardboard.Eye;
-import com.google.vrtoolkit.cardboard.HeadTransform;
-import com.google.vrtoolkit.cardboard.Viewport;
+
+import com.google.vr.sdk.base.Eye;
+import com.google.vr.sdk.base.GvrView;
+import com.google.vr.sdk.base.HeadTransform;
+import com.google.vr.sdk.base.Viewport;
+
 import org.rajawali3d.Object3D;
 import org.rajawali3d.math.Matrix4;
 import org.rajawali3d.math.Quaternion;
@@ -29,7 +31,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 /**
  * @author dennis.ippel
  */
-public abstract class VRRenderer extends Renderer implements CardboardView.StereoRenderer {
+public abstract class VRRenderer extends Renderer implements GvrView.StereoRenderer {
     private static final float MAX_LOOKAT_ANGLE = 10;
 
     protected Matrix4 mCurrentEyeMatrix;

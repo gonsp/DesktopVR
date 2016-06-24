@@ -1,4 +1,4 @@
-package gonmolon.desktopvr;
+package gonmolon.desktopvr.vr;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
