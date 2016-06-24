@@ -103,7 +103,7 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
             Element element = (Element) iterator.next();
             element.draw(perspective);
             if(element.isLookingAt(headView)) {
-                //TODO Reticle big
+                //TODO GazePointer big
             }
         }
     }
