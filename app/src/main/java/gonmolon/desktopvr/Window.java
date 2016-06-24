@@ -44,15 +44,6 @@ public class Window extends Element {
             1.0f, 1.0f, 0.0f
     };
 
-    public static final float[] FRAME_COORDS = new float[] {
-            -1.1f, 1.1f, 0.0f,
-            -1.1f, -1.1f, 0.0f,
-            1.1f, 1.1f, 0.0f,
-            -1.1f, -1.1f, 0.0f,
-            1.1f, -1.1f, 0.0f,
-            1.1f, 1.1f, 0.0f
-    };
-
     public static final float[] NORMALS = new float[] {
             0.0f, 0.0f, 1.0f,
             0.0f, 0.0f, 1.0f,
