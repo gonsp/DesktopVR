@@ -25,7 +25,7 @@ public class GazePointer extends Sphere {
 
     public void refresh(boolean clickable) {
         if(clickable) {
-            setScale(1.3f);
+            setScale(2f);
         } else {
             setScale(1.0f);
         }

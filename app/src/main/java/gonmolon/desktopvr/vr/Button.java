@@ -1,14 +1,27 @@
 package gonmolon.desktopvr.vr;
 
-import gonmolon.desktopvr.R;
+import android.graphics.Color;
 
-public class Button extends Element {
+import org.rajawali3d.materials.Material;
+import org.rajawali3d.materials.methods.DiffuseMethod;
+import org.rajawali3d.primitives.RectangularPrism;
 
-    private static final String SHADER_NAME = "Button";
+public class Button extends Element implements VRListener {
+
     private VRListener listener;
+    private RectangularPrism test; //TODO delete this
 
-    public Button(VRView vrView) {
-        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.model_fragment, COORDS, NORMALS, COLORS);
+    public Button(int color) {
+        super(0.5f, 0.5f);
+        test = new RectangularPrism(0.5f, 0.5f, 0);
+        Material material = new Material();
+        material.enableLighting(true);
+        material.setDiffuseMethod(new DiffuseMethod.Lambert());
+        material.setColor(color);
+        test.setMaterial(material);
+        addChild(test); //TODO delete this
+        isContainer(true); //TODO delete this
+        test.setPosition(0, 0, 0.01);
     }
 
     public void setVRListener(VRListener listener) {
@@ -18,7 +31,7 @@ public class Button extends Element {
     @Override
     public void onStartLooking() {
         if(listener != null) {
-            listener.onStartLooking(); //Param relative position
+            listener.onStartLooking();
         }
     }
 
@@ -30,41 +43,14 @@ public class Button extends Element {
     @Override
     public void onLongLooking() {
         if(listener != null) {
-            listener.onLongLooking(); //Param relative position
+            listener.onLongLooking();
         }
     }
 
     @Override
     public void onClick() {
         if(listener != null) {
-            listener.onClick(); //Param relative position
+            listener.onClick();
         }
     }
-
-    public static final float[] COORDS = new float[]{
-            -1, 1, 0,
-            -1, -1, 0,
-            1, 1, 0,
-            -1, -1, 0,
-            1, -1, 0,
-            1, 1, 0
-    };
-
-    public static final float[] NORMALS = new float[] {
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-    };
-
-    public static final float[] COLORS = new float[] {
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-    };
 }

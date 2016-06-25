@@ -1,30 +1,37 @@
 package gonmolon.desktopvr.vr;
 
-import android.util.Log;
+import android.graphics.Color;
 
-import gonmolon.desktopvr.R;
+import org.rajawali3d.primitives.RectangularPrism;
 
-public class Window extends Element {
+public class Window extends Layout implements VRListener {
 
-    private static final String SHADER_NAME = "Window";
-    private String name;
+    DesktopRenderer renderer;
 
-    public Window(VRView vrView, String name, float width, float height, float x, float y, float z) {
-        super(vrView, SHADER_NAME, R.raw.light_vertex, R.raw.model_fragment, COORDS, NORMALS, COLORS);
-        this.name = name;
+    public Menu menu;
+    public RectangularPrism content; //TODO own class IMPORTANT
 
-        scale(width, height);
-        move(x, y, z);
+    public Window(DesktopRenderer renderer, float width, float height) {
+        super(width, height, LayoutParams.VERTICAL);
+        renderer.getCurrentScene().addChild(this);
+
+        this.renderer = renderer;
+
+        menu = new Menu(this);
+
+        Layout test = new Layout(this, width, height-menu.getHeight(), LayoutParams.VERTICAL);
+        test.setBackground(Color.WHITE);
+
+        setLookAt(renderer.mCameraPosition);
     }
 
     @Override
     public void onClick() {
-        Log.d(SHADER_NAME, "TOCADO");
     }
 
     @Override
     public void onStartLooking() {
-        Log.d(SHADER_NAME, "HELLOUUUU");
+
     }
 
     @Override
@@ -37,30 +44,15 @@ public class Window extends Element {
 
     }
 
-    public static final float[] COORDS = new float[] {
-            -1.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f
-    };
+    public float getWidth() {
+        return width;
+    }
 
-    public static final float[] NORMALS = new float[] {
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-            0.0f, 0.0f, 1.0f,
-    };
+    public float getHeight() {
+        return height;
+    }
 
-    public static final float[] COLORS = new float[] {
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-    };
+    public void close() {
+        renderer.getCurrentScene().removeChild(this);
+    }
 }
