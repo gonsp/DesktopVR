@@ -11,19 +11,25 @@ public class GazePointer extends Sphere {
 
     private VRRenderer renderer;
     private float[] absolutePos = new float[4];
-    private float[] relativePos = {0, 0, -3, 1.0f};
+    private float[] relativePos = {0, 0, -2, 1.0f};
     private float[] headViewMatrix = new float[16];
 
     public GazePointer(VRRenderer renderer) {
-        super(0.02f, 12, 12);
+        super(0.01f, 12, 12);
         this.renderer = renderer;
         Material material = new Material();
-        material.setColor(Color.WHITE);
+        material.setColor(Color.GRAY);
         setMaterial(material);
         renderer.getCurrentScene().addChild(this);
     }
 
     public void refresh(boolean clickable) {
+        if(clickable) {
+            setScale(1.3f);
+        } else {
+            setScale(1.0f);
+        }
+
         Matrix4 matrix = new Matrix4();
         matrix.setAll(renderer.mHeadViewMatrix);
         matrix.inverse().toFloatArray(headViewMatrix);

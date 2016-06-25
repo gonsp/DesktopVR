@@ -75,8 +75,8 @@ public class VRView extends GvrView implements GvrView.StereoRenderer {
         Log.i(TAG, "onSurfaceCreated");
         GLES20.glClearColor(0.1f, 0.1f, 0.1f, 0.5f);
 
-        elements.addElement(new Floor(this));
-        elements.addElement(new Window(this, "test", 2.0f, 1.0f, 0.0f, 0.0f, -3.5f));
+        //elements.addElement(new Floor(this));
+        //elements.addElement(new Window(this, "test", 2.0f, 1.0f, 0.0f, 0.0f, -3.5f));
     }
 
     @Override
