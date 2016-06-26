@@ -1,10 +1,10 @@
 package gonmolon.desktopvr.vr;
 
-public class ContainerException extends Exception {
+public class WindowManagerException extends Exception {
 
     private Error error;
 
-    public ContainerException(Error error) {
+    public WindowManagerException(Error error) {
         super();
         this.error = error;
     }

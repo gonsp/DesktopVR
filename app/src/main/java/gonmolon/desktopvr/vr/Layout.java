@@ -2,7 +2,7 @@ package gonmolon.desktopvr.vr;
 
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
-import org.rajawali3d.primitives.RectangularPrism;
+import org.rajawali3d.primitives.Plane;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ public class Layout extends Element {
 
     private LayoutParams orientation;
     private ArrayList<Element> children;
-    private RectangularPrism background;
+    private Plane background;
     private float offset = 0;
 
     public Layout(float width, float height, LayoutParams orientation) {
@@ -33,7 +33,7 @@ public class Layout extends Element {
 
     public void setBackground(int color) {
         if(background == null) {
-            background = new RectangularPrism(width, getHeight(), 0);
+            background = new Plane(width, getHeight(), 1, 1);
             addChild(background);
             background.setPosition(0, 0, 0);
         }

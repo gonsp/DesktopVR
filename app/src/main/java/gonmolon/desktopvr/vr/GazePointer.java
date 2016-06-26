@@ -9,12 +9,12 @@ import org.rajawali3d.primitives.Sphere;
 
 public class GazePointer extends Sphere {
 
-    private VRRenderer renderer;
+    private DesktopRenderer renderer;
     private float[] absolutePos = new float[4];
     private float[] relativePos = {0, 0, -2, 1.0f};
     private float[] headViewMatrix = new float[16];
 
-    public GazePointer(VRRenderer renderer) {
+    public GazePointer(DesktopRenderer renderer) {
         super(0.01f, 12, 12);
         this.renderer = renderer;
         Material material = new Material();

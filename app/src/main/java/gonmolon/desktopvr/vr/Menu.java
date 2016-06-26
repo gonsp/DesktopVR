@@ -6,7 +6,7 @@ public class Menu extends Layout {
 
     public static final float HEIGHT = 0.5f;
 
-    public Button closeButton;
+    private Button closeButton;
     private Button minimizeButton;
 
     public Menu(final Window window) {
@@ -14,8 +14,8 @@ public class Menu extends Layout {
 
         setBackground(Color.BLUE);
 
-        closeButton = new Button(Color.GREEN);
-        minimizeButton = new Button(Color.BLACK);
+        closeButton = new Button(HEIGHT, HEIGHT, Color.GREEN);
+        minimizeButton = new Button(HEIGHT, HEIGHT, Color.BLACK);
 
         closeButton.setVRListener(new VRListener() {
             @Override

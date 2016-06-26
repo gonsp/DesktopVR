@@ -3,15 +3,13 @@ package gonmolon.desktopvr.vr;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.opengl.Matrix;
-import android.util.Log;
 import android.view.MotionEvent;
 
-import org.rajawali3d.Object3D;
 import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
-import org.rajawali3d.math.Matrix4;
+import org.rajawali3d.math.vector.Vector3;
+import org.rajawali3d.primitives.Plane;
 import org.rajawali3d.primitives.Sphere;
 
 public class DesktopRenderer extends VRRenderer {
@@ -19,6 +17,8 @@ public class DesktopRenderer extends VRRenderer {
     private GazePointer pointer;
     private Window window;
     private Sphere bola;
+
+    public final Vector3 position = new Vector3(0, 0, 0);
 
     public DesktopRenderer(Context context) {
         super(context);
@@ -35,25 +35,41 @@ public class DesktopRenderer extends VRRenderer {
         FloorGenerator.generate(this);
         pointer = new GazePointer(this);
         window = new Window(this, 8, 5f);
-        window.setPosition(0, 0, -10);
-        window.setLookAt(getCurrentCamera().getPosition());
+        window.setPosition(0, 0, -5);
 
-        bola = new Sphere(0.1f, 12, 12);
+        bola = new Sphere(1f, 12, 12);
         Material material = new Material();
         material.enableLighting(true);
         material.setDiffuseMethod(new DiffuseMethod.Lambert());
         bola.setMaterial(material);
         bola.setColor(Color.YELLOW);
-        bola.setPosition(0, window.getY() + window.menu.getY(), -10);
-        getCurrentScene().addChild(bola);
+        //getCurrentScene().addChild(bola);
+        bola.setPosition(0, 0, -6);
 
-        Log.d("HELLOU", String.valueOf(window.menu.closeButton.getWorldPosition().x));
+        Plane plane = new Plane(10, 10, 1, 1);
+        material = new Material();
+        material.enableLighting(true);
+        material.setDiffuseMethod(new DiffuseMethod.Lambert());
+        plane.setMaterial(material);
+        plane.setColor(Color.GREEN);
+        plane.setPosition(0, 0, -10);
+        //getCurrentScene().addChild(plane);
+    }
+
+    public Vector3 getCameraDir() {
+        Vector3 cameraDir = new Vector3();
+        mHeadViewQuaternion.fromMatrix(mHeadViewMatrix);
+        mHeadViewQuaternion.inverse();
+        cameraDir.setAll(0, 0, 1);
+        cameraDir.transform(mHeadViewQuaternion);
+        cameraDir.inverse();
+        return cameraDir;
     }
 
     @Override
     public void onRender(long elapsedTime, double deltaTime) {
         if(pointer != null) {
-            pointer.refresh(isLookingAtObject(bola));
+            pointer.refresh(window.isLookingAt());
         }
         super.onRender(elapsedTime, deltaTime);
     }

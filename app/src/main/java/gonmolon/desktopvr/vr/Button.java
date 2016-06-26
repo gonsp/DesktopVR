@@ -1,19 +1,17 @@
 package gonmolon.desktopvr.vr;
 
-import android.graphics.Color;
-
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
-import org.rajawali3d.primitives.RectangularPrism;
+import org.rajawali3d.primitives.Plane;
 
 public class Button extends Element implements VRListener {
 
     private VRListener listener;
-    private RectangularPrism test; //TODO delete this
+    private Plane test; //TODO delete this
 
-    public Button(int color) {
-        super(0.5f, 0.5f);
-        test = new RectangularPrism(0.5f, 0.5f, 0);
+    public Button(float width, float height, int color) {
+        super(width, width);
+        test = new Plane(width, height, 1, 1);
         Material material = new Material();
         material.enableLighting(true);
         material.setDiffuseMethod(new DiffuseMethod.Lambert());
