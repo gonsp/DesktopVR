@@ -25,7 +25,10 @@ public abstract class ParentLayout extends Layout {
         Vector3 intersection = cameraPos.add(cameraDir.multiply(t));
         intersection.subtract(windowPos);
         Vector3 relativePosition = transformPosition(intersection);
-        return t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2;
+        if(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2) {
+            return isLookingAt(relativePosition.x, relativePosition.y);
+        }
+        return false;
     }
 
     private Vector3 getDir() {

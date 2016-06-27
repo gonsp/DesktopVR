@@ -1,20 +1,17 @@
 package gonmolon.desktopvr.vr;
 
-import android.graphics.Color;
-
 public class Window extends ParentLayout implements VRListener {
 
 
     private Menu menu;
-    private WindowContent content; //TODO own class IMPORTANT
+    private WindowContent content;
 
     public Window(DesktopRenderer renderer, float width, float height) {
         super(renderer, width, height, LayoutParams.VERTICAL);
 
         menu = new Menu(this);
-
-        Layout test = new Layout(this, width, height-menu.getHeight(), LayoutParams.VERTICAL);
-        test.setBackground(Color.WHITE);
+        content = new WindowContent(width, height-menu.getHeight());
+        addChild(content);
     }
 
     @Override

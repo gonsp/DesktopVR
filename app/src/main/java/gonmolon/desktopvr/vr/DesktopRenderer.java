@@ -2,28 +2,18 @@ package gonmolon.desktopvr.vr;
 
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.vr.sdk.base.Eye;
 import com.google.vr.sdk.base.HeadTransform;
 
 import org.rajawali3d.lights.DirectionalLight;
-import org.rajawali3d.materials.Material;
-import org.rajawali3d.materials.methods.DiffuseMethod;
-import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.math.vector.Vector3;
-import org.rajawali3d.primitives.Plane;
-import org.rajawali3d.primitives.Sphere;
-
-import gonmolon.desktopvr.R;
 
 public class DesktopRenderer extends VRRenderer {
 
     private GazePointer pointer;
     private Window window;
-    private Sphere bola;
 
     public Vector3 position;
     public Vector3 leftEyePos;
@@ -40,11 +30,6 @@ public class DesktopRenderer extends VRRenderer {
         rightEyePos = new Vector3(position);
 
         getCurrentCamera().setFarPlane(1000);
-        try {
-            getCurrentScene().setSkybox(R.drawable.posx, R.drawable.negx, R.drawable.posy, R.drawable.negy, R.drawable.posz, R.drawable.negz);
-        } catch (ATexture.TextureException e) {
-            e.printStackTrace();
-        }
 
         DirectionalLight light = new DirectionalLight(0f, -1f, -0.5f);
         light.setPower(2f);
@@ -54,24 +39,6 @@ public class DesktopRenderer extends VRRenderer {
         pointer = new GazePointer(this);
         window = new Window(this, 8, 5f);
         window.setAngularPosition(90, 0, 10);
-
-        bola = new Sphere(1f, 12, 12);
-        Material material = new Material();
-        material.enableLighting(true);
-        material.setDiffuseMethod(new DiffuseMethod.Lambert());
-        bola.setMaterial(material);
-        bola.setColor(Color.YELLOW);
-        getCurrentScene().addChild(bola);
-        bola.setPosition(0, 0, -6);
-
-        Plane plane = new Plane(10, 10, 1, 1);
-        material = new Material();
-        material.enableLighting(true);
-        material.setDiffuseMethod(new DiffuseMethod.Lambert());
-        plane.setMaterial(material);
-        plane.setColor(Color.GREEN);
-        plane.setPosition(0, 0, -10);
-        //getCurrentScene().addChild(plane);
     }
 
     public Vector3 getCameraDir() {

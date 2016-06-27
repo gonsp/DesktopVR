@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
+import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.terrain.SquareTerrain;
 import org.rajawali3d.terrain.TerrainGenerator;
 
@@ -30,6 +31,9 @@ public abstract class FloorGenerator {
             floor.setY(-100);
             floor.setMaterial(material);
             renderer.getCurrentScene().addChild(floor);
+
+            renderer.getCurrentScene().setSkybox(R.drawable.posx, R.drawable.negx, R.drawable.posy, R.drawable.negy, R.drawable.posz, R.drawable.negz);
+
             return floor;
         } catch (Exception e) {
             e.printStackTrace();

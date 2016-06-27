@@ -1,25 +1,15 @@
 package gonmolon.desktopvr.vr;
 
-import org.rajawali3d.materials.Material;
-import org.rajawali3d.materials.methods.DiffuseMethod;
-import org.rajawali3d.primitives.Plane;
-
 public class Button extends Element implements VRListener {
 
     private VRListener listener;
-    private Plane test; //TODO delete this
 
-    public Button(float width, float height, int color) {
-        super(width, width);
-        test = new Plane(width, height, 1, 1);
-        Material material = new Material();
-        material.enableLighting(true);
-        material.setDiffuseMethod(new DiffuseMethod.Lambert());
-        material.setColor(color);
-        test.setMaterial(material);
-        addChild(test); //TODO delete this
-        isContainer(true); //TODO delete this
-        test.setPosition(0, 0, 0.01);
+    public Button(float width, float height) {
+        super(width, height);
+    }
+
+    public Button(Layout parent, float width, float height) {
+        super(parent, width, height);
     }
 
     public void setVRListener(VRListener listener) {

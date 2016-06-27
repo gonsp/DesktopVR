@@ -2,20 +2,21 @@ package gonmolon.desktopvr.vr;
 
 import android.graphics.Color;
 
+import gonmolon.desktopvr.R;
+
 public class Menu extends Layout {
 
-    public static final float HEIGHT = 0.5f;
+    public static final float HEIGHT = 0.3f;
 
     private Button closeButton;
     private Button minimizeButton;
 
     public Menu(final Window window) {
-        super(window.getWidth(), HEIGHT, LayoutParams.HORIZONTAL);
+        super(window, window.getWidth(), HEIGHT, LayoutParams.HORIZONTAL);
 
-        setBackground(Color.BLUE);
-
-        closeButton = new Button(HEIGHT, HEIGHT, Color.GREEN);
-        minimizeButton = new Button(HEIGHT, HEIGHT, Color.BLACK);
+        closeButton = new Button(this, HEIGHT, HEIGHT);
+        closeButton.setImage(R.mipmap.ic_launcher);
+        minimizeButton = new Button(this, HEIGHT, HEIGHT);
 
         closeButton.setVRListener(new VRListener() {
             @Override
@@ -33,9 +34,6 @@ public class Menu extends Layout {
             public void onLongLooking() {}
         });
 
-        addChild(closeButton);
-        addChild(minimizeButton);
-
-        window.addChild(this);
+        setBackgroundColor(Color.BLUE);
     }
 }

@@ -1,7 +1,5 @@
 package gonmolon.desktopvr.vr;
 
-import org.rajawali3d.materials.Material;
-import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.primitives.Plane;
 
 import java.util.ArrayList;
@@ -11,7 +9,7 @@ public class Layout extends Element {
 
     private LayoutParams orientation;
     private ArrayList<Element> children;
-    private Plane background;
+    private LayoutBackground background;
     private float offset = 0;
 
     public Layout(float width, float height, LayoutParams orientation) {
@@ -31,17 +29,17 @@ public class Layout extends Element {
         parent.addChild(this);
     }
 
-    public void setBackground(int color) {
+    public boolean isLookingAt(double x, double y) {
+        return true;
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
         if(background == null) {
-            background = new Plane(width, getHeight(), 1, 1);
-            addChild(background);
-            background.setPosition(0, 0, 0);
+            background = new LayoutBackground(this, color);
+            super.addChild(background);
+            //background.setPosition(0, 0, 0);
         }
-        Material material = new Material();
-        material.enableLighting(true);
-        material.setDiffuseMethod(new DiffuseMethod.Lambert());
-        material.setColor(color);
-        background.setMaterial(material);
     }
 
     public void addChild(Element element) {
@@ -56,9 +54,47 @@ public class Layout extends Element {
         children.add(element);
     }
 
+    @Override
+    public void onClick() {
 
+    }
+
+    @Override
+    public void onStartLooking() {
+
+    }
+
+    @Override
+    public void onStopLooking() {
+
+    }
+
+    @Override
+    public void onLongLooking() {
+
+    }
 
     public enum LayoutParams {
         HORIZONTAL, VERTICAL
+    }
+
+    protected class LayoutBackground extends Element {
+
+        protected LayoutBackground(Layout layout, int color) {
+            super(layout.width, layout.height);
+            setBackgroundColor(color);
+        }
+
+        @Override
+        public void onClick() {}
+
+        @Override
+        public void onStartLooking() {}
+
+        @Override
+        public void onStopLooking() {}
+
+        @Override
+        public void onLongLooking() {}
     }
 }
