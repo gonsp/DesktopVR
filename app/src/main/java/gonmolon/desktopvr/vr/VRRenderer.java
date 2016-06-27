@@ -14,6 +14,7 @@
 package gonmolon.desktopvr.vr;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.vr.sdk.base.Eye;
 import com.google.vr.sdk.base.GvrView;

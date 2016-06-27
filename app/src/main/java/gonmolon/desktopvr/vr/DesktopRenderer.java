@@ -3,7 +3,10 @@ package gonmolon.desktopvr.vr;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.MotionEvent;
+
+import com.google.vr.sdk.base.HeadTransform;
 
 import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.materials.Material;
@@ -18,7 +21,8 @@ public class DesktopRenderer extends VRRenderer {
     private Window window;
     private Sphere bola;
 
-    public final Vector3 position = new Vector3(0, 0, 0);
+    public Vector3 position;
+    public Vector3 leftEyePos;
 
     public DesktopRenderer(Context context) {
         super(context);
@@ -26,6 +30,9 @@ public class DesktopRenderer extends VRRenderer {
 
     @Override
     protected void initScene() {
+        leftEyePos = new Vector3(0, 0, 0);
+        position = new Vector3(0, 0, 0);
+
         getCurrentCamera().setFarPlane(1000);
 
         DirectionalLight light = new DirectionalLight(0f, -1f, -0.5f);
@@ -57,21 +64,36 @@ public class DesktopRenderer extends VRRenderer {
     }
 
     public Vector3 getCameraDir() {
+        /*
         Vector3 cameraDir = new Vector3();
         mHeadViewQuaternion.fromMatrix(mHeadViewMatrix);
         mHeadViewQuaternion.inverse();
         cameraDir.setAll(0, 0, 1);
         cameraDir.transform(mHeadViewQuaternion);
         cameraDir.inverse();
+        return cameraDir;*/
+        Vector3 cameraDir = new Vector3(pointer.getPosition());
+        cameraDir.subtract(position);
         return cameraDir;
     }
 
     @Override
-    public void onRender(long elapsedTime, double deltaTime) {
+    public void onNewFrame(HeadTransform headTransform) {
+        super.onNewFrame(headTransform);
+        position = new Vector3(getCurrentCamera().getPosition());
+        position.add(leftEyePos);
+        position.divide(2.0f);
+        Log.d("HELLOU", position.x + ", " + position.y + ", " + position.z);
         if(pointer != null) {
-            pointer.refresh(window.isLookingAt());
+            pointer.refresh();
+            pointer.setClickable(window.isLookingAt());
         }
+    }
+
+    @Override
+    public void onRender(long elapsedTime, double deltaTime) {
         super.onRender(elapsedTime, deltaTime);
+        leftEyePos = new Vector3(getCurrentCamera().getPosition());
     }
 
 

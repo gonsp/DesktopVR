@@ -15,26 +15,24 @@ public class GazePointer extends Sphere {
     private float[] headViewMatrix = new float[16];
 
     public GazePointer(DesktopRenderer renderer) {
-        super(0.01f, 12, 12);
+        super(0.005f, 12, 12);
         this.renderer = renderer;
         Material material = new Material();
-        material.setColor(Color.GRAY);
+        material.setColor(Color.RED);
         setMaterial(material);
         renderer.getCurrentScene().addChild(this);
     }
 
-    public void refresh(boolean clickable) {
-        if(clickable) {
-            setScale(2f);
-        } else {
-            setScale(1.0f);
-        }
-
+    public void refresh() {
         Matrix4 matrix = new Matrix4();
         matrix.setAll(renderer.mHeadViewMatrix);
         matrix.inverse().toFloatArray(headViewMatrix);
         Matrix.multiplyMV(absolutePos, 0, headViewMatrix, 0, relativePos, 0);
         setPosition(absolutePos[0], absolutePos[1], absolutePos[2]);
         setLookAt(renderer.getCurrentCamera().getPosition());
+    }
+
+    public void setClickable(boolean clickable) {
+        setScale(clickable ? 2.0f : 1.0f);
     }
 }
