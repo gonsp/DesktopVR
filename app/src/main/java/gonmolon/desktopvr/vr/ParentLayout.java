@@ -44,6 +44,14 @@ public abstract class ParentLayout extends Layout {
         return new Vector3(res);
     }
 
+    public void setAngularPosition(double angle, double height, double distance) {
+        angle = (angle/360)*2*Math.PI;
+        Vector3 pos = new Vector3(distance, 0, 0);
+        pos.rotateY(angle);
+        pos.y = height;
+        setPosition(pos.x, pos.y, pos.z);
+    }
+
     @Override
     public void setPosition(double x, double y, double z) {
         super.setPosition(x, y, z);
