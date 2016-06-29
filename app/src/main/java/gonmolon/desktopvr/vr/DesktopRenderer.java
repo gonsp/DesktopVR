@@ -38,7 +38,7 @@ public class DesktopRenderer extends VRRenderer {
         FloorGenerator.generate(this);
         pointer = new GazePointer(this);
         window = new Window(this, 8, 5f);
-        window.setAngularPosition(90, 0, 10);
+        window.setAngularPosition(90, 0, 5);
     }
 
     public Vector3 getCameraDir() {

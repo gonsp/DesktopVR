@@ -26,7 +26,7 @@ public abstract class ParentLayout extends Layout {
         intersection.subtract(windowPos);
         Vector3 relativePosition = transformPosition(intersection);
         if(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2) {
-            return isLookingAt(relativePosition.x, relativePosition.y);
+            return setLookingAt(true, relativePosition.x, relativePosition.y);
         }
         return false;
     }

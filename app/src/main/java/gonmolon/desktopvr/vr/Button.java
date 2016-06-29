@@ -17,6 +17,21 @@ public class Button extends Element implements VRListener {
     }
 
     @Override
+    public void onClick(double x, double y) {
+        if(listener != null) {
+            listener.onClick(x, y);
+        }
+    }
+
+    @Override
+    public boolean onLooking(double x, double y) {
+        if(listener != null) {
+            return listener.onLooking(x, y);
+        }
+        return false;
+    }
+
+    @Override
     public void onStartLooking() {
         if(listener != null) {
             listener.onStartLooking();
@@ -25,20 +40,15 @@ public class Button extends Element implements VRListener {
 
     @Override
     public void onStopLooking() {
-
+        if(listener != null) {
+            listener.onStopLooking();
+        }
     }
 
     @Override
     public void onLongLooking() {
         if(listener != null) {
             listener.onLongLooking();
-        }
-    }
-
-    @Override
-    public void onClick() {
-        if(listener != null) {
-            listener.onClick();
         }
     }
 }

@@ -1,16 +1,13 @@
 package gonmolon.desktopvr.vr;
 
-import org.rajawali3d.primitives.Plane;
-
-import java.util.ArrayList;
-
+import org.rajawali3d.math.vector.Vector3;
 
 public class Layout extends Element {
 
     private LayoutParams orientation;
-    private ArrayList<Element> children;
     private LayoutBackground background;
-    private float offset = 0;
+    private float offset;
+    private Element childFocused;
 
     public Layout(float width, float height, LayoutParams orientation) {
         super(width, height);
@@ -18,19 +15,14 @@ public class Layout extends Element {
         isContainer(true);
         if(orientation == LayoutParams.HORIZONTAL) {
             offset = -width/2;
-        } else if(orientation == LayoutParams.VERTICAL) {
+        } else {
             offset = height/2;
         }
-        children = new ArrayList<>();
     }
 
     public Layout(Layout parent, float width, float height, LayoutParams orientation) {
         this(width, height, orientation);
         parent.addChild(this);
-    }
-
-    public boolean isLookingAt(double x, double y) {
-        return true;
     }
 
     @Override
@@ -51,28 +43,53 @@ public class Layout extends Element {
             element.setPosition(0, offset - element.getHeight()/2, 0);
             offset -= element.getHeight();
         }
-        children.add(element);
+    }
+
+    private Element getElementIn(double x, double y) {
+        for(int i = 0; i < getNumChildren(); ++i) {
+            Element element = (Element) getChildAt(i);
+            Vector3 pos = element.getPosition();
+            if(x >= pos.x - element.getWidth() && x <= pos.x + element.getWidth() && y >= pos.y - element.getHeight() && y <= pos.y + element.getHeight()) {
+                return element;
+            }
+        }
+        return null;
     }
 
     @Override
-    public void onClick() {
-
+    public void onClick(double x, double y) {
+        Element element = getElementIn(x, y);
+        if(element != null) {
+            element.setClickAt(x - element.getPosition().x, y - element.getPosition().y);
+        }
     }
 
     @Override
-    public void onStartLooking() {
-
+    public boolean onLooking(double x, double y) {
+        boolean focus = false;
+        Element element = getElementIn(x, y);
+        if(element != null) {
+            focus = element.setLookingAt(true, x - element.getPosition().x, y - element.getPosition().y);
+        }
+        if(childFocused != null && (element == null || element.getNumChildren() != childFocused.getNumChildren())) {
+            childFocused.setLookingAt(false, 0, 0);
+        }
+        childFocused = element;
+        return focus;
     }
 
     @Override
     public void onStopLooking() {
-
+        if(childFocused != null) {
+            childFocused.setLookingAt(false, 0, 0);
+        }
     }
 
     @Override
-    public void onLongLooking() {
+    public void onStartLooking() {}
 
-    }
+    @Override
+    public void onLongLooking() {}
 
     public enum LayoutParams {
         HORIZONTAL, VERTICAL
@@ -86,7 +103,7 @@ public class Layout extends Element {
         }
 
         @Override
-        public void onClick() {}
+        public void onClick(double x, double y) {}
 
         @Override
         public void onStartLooking() {}

@@ -1,6 +1,6 @@
 package gonmolon.desktopvr.vr;
 
-public class Window extends ParentLayout implements VRListener {
+public class Window extends ParentLayout {
 
 
     private Menu menu;
@@ -12,32 +12,5 @@ public class Window extends ParentLayout implements VRListener {
         menu = new Menu(this);
         content = new WindowContent(width, height-menu.getHeight());
         addChild(content);
-    }
-
-    @Override
-    public void onClick() {
-    }
-
-    @Override
-    public void onStartLooking() {
-
-    }
-
-    @Override
-    public void onStopLooking() {
-
-    }
-
-    @Override
-    public void onLongLooking() {
-
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
     }
 }
