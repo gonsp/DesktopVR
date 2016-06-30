@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class WindowManager {
+public class WindowsManager {
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
 
-    public WindowManager(DesktopRenderer renderer) {
+    public WindowsManager(DesktopRenderer renderer) {
         this.renderer = renderer;
         windows = new HashMap<>();
     }
@@ -17,11 +17,11 @@ public class WindowManager {
         return new WindowsIterator(this);
     }
 
-    public void addWindow(Window window, int ID) throws WindowManagerException {
+    public void addWindow(Window window, int ID) throws WindowsManagerException {
         if(ID < 0) {
-            throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
+            throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
         } else if(windows.containsKey(ID)) {
-            throw new WindowManagerException(WindowManagerException.Error.ID_USED);
+            throw new WindowsManagerException(WindowsManagerException.Error.ID_USED);
         } else {
             windows.put(ID, window);
             renderer.getCurrentScene().addChild(window);
@@ -29,23 +29,23 @@ public class WindowManager {
         }
     }
 
-    public void removeWindow(int ID) throws WindowManagerException {
+    public void removeWindow(int ID) throws WindowsManagerException {
         if(ID < 0) {
-            throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
+            throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
         } else if (windows.containsKey(ID)) {
             windows.remove(ID);
         } else {
-            throw new WindowManagerException(WindowManagerException.Error.ID_NONEXISTENT);
+            throw new WindowsManagerException(WindowsManagerException.Error.ID_NONEXISTENT);
         }
     }
 
-    public Window getWindow(int ID) throws WindowManagerException {
+    public Window getWindow(int ID) throws WindowsManagerException {
         if (ID < 0) {
-            throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
+            throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
         } else if (windows.containsKey(ID)) {
             return windows.get(ID);
         } else {
-            throw new WindowManagerException(WindowManagerException.Error.ID_NONEXISTENT);
+            throw new WindowsManagerException(WindowsManagerException.Error.ID_NONEXISTENT);
         }
     }
 
@@ -75,7 +75,7 @@ public class WindowManager {
 
         private Iterator<Map.Entry<Integer, Window>> iterator;
 
-        private WindowsIterator(WindowManager manager) {
+        private WindowsIterator(WindowsManager manager) {
             iterator = manager.windows.entrySet().iterator();
         }
 

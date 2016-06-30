@@ -13,7 +13,7 @@ import org.rajawali3d.math.vector.Vector3;
 public class DesktopRenderer extends VRRenderer {
 
     private GazePointer pointer;
-    private WindowManager windowManager;
+    private WindowsManager windowManager;
 
     public Vector3 position;
     public Vector3 leftEyePos;
@@ -33,7 +33,7 @@ public class DesktopRenderer extends VRRenderer {
 
         FloorGenerator.generate(this, false);
         pointer = new GazePointer(this);
-        windowManager = new WindowManager(this);
+        windowManager = new WindowsManager(this);
     }
 
     public Vector3 getCameraDir() {
@@ -82,7 +82,7 @@ public class DesktopRenderer extends VRRenderer {
             try {
                 windowManager.addWindow(test, testID++);
                 Log.d("HELLOU", "new window added");
-            } catch (WindowManagerException e) {
+            } catch (WindowsManagerException e) {
                 e.printStackTrace();
             }
         }
