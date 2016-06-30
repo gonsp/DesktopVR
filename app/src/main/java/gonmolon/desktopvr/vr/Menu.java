@@ -15,8 +15,9 @@ public class Menu extends Layout {
         super(window, window.getWidth(), HEIGHT, LayoutParams.HORIZONTAL);
 
         closeButton = new Button(this, HEIGHT, HEIGHT);
-        closeButton.setImage(R.mipmap.ic_launcher);
+        closeButton.setBackgroundColor(Color.BLACK);
         minimizeButton = new Button(this, HEIGHT, HEIGHT);
+        minimizeButton.setBackgroundColor(Color.YELLOW);
 
         closeButton.setVRListener(new VRListener() {
             @Override

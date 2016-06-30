@@ -4,7 +4,7 @@ import org.rajawali3d.math.vector.Vector3;
 
 public abstract class ParentLayout extends Layout {
 
-    private DesktopRenderer renderer;
+    protected DesktopRenderer renderer;
     double[][] transformationMatrix;
 
     public ParentLayout(DesktopRenderer renderer, float width, float height, LayoutParams orientation) {
@@ -25,10 +25,7 @@ public abstract class ParentLayout extends Layout {
         Vector3 intersection = cameraPos.add(cameraDir.multiply(t));
         intersection.subtract(windowPos);
         Vector3 relativePosition = transformPosition(intersection);
-        if(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2) {
-            return setLookingAt(true, relativePosition.x, relativePosition.y);
-        }
-        return false;
+        return setLookingAt(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2, relativePosition.x, relativePosition.y);
     }
 
     private Vector3 getDir() {
@@ -78,9 +75,5 @@ public abstract class ParentLayout extends Layout {
         transformationMatrix[2][0] = v3.x;
         transformationMatrix[2][1] = v3.y;
         transformationMatrix[2][2] = v3.z;
-    }
-
-    public void close() {
-        renderer.getCurrentScene().removeChild(this);
     }
 }

@@ -1,5 +1,7 @@
 package gonmolon.desktopvr.vr;
 
+import android.util.Log;
+
 import org.rajawali3d.math.vector.Vector3;
 
 public class Layout extends Element {
@@ -49,7 +51,7 @@ public class Layout extends Element {
         for(int i = 0; i < getNumChildren(); ++i) {
             Element element = (Element) getChildAt(i);
             Vector3 pos = element.getPosition();
-            if(x >= pos.x - element.getWidth() && x <= pos.x + element.getWidth() && y >= pos.y - element.getHeight() && y <= pos.y + element.getHeight()) {
+            if(x >= pos.x - element.getWidth()/2 && x <= pos.x + element.getWidth()/2 && y >= pos.y - element.getHeight()/2 && y <= pos.y + element.getHeight()/2) {
                 return element;
             }
         }

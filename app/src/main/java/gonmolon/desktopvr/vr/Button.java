@@ -14,6 +14,7 @@ public class Button extends Element implements VRListener {
 
     public void setVRListener(VRListener listener) {
         this.listener = listener;
+        setFocusable(true);
     }
 
     @Override
@@ -25,7 +26,7 @@ public class Button extends Element implements VRListener {
 
     @Override
     public boolean onLooking(double x, double y) {
-        if(listener != null) {
+        if(isFocusable()) {
             return listener.onLooking(x, y);
         }
         return false;

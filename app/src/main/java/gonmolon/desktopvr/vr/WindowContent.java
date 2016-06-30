@@ -1,44 +1,41 @@
 package gonmolon.desktopvr.vr;
 
 
-import android.graphics.Color;
 import android.util.Log;
 
 import gonmolon.desktopvr.R;
 
 public class WindowContent extends Element {
 
-    public WindowContent(float width, float height) {
-        super(width, height);
+    public WindowContent(Window parent, float width, float height) {
+        super(parent, width, height);
         setFocusable(true);
-        setBackgroundColor(Color.WHITE);
         setImage(R.drawable.desktop);
     }
 
 
     @Override
     public void onClick(double x, double y) {
-
+        Log.d("WindowContent", "Click registred!");
     }
 
     @Override
     public boolean onLooking(double x, double y) {
-        Log.d("HELLOU", "Estoy apuntado en la pos: (" + x + ", " + y + ")");
-        return true;
+        return super.onLooking(x, y);
     }
 
     @Override
     public void onStartLooking() {
-
+        Log.d("WindowContent", "Start looking!");
     }
 
     @Override
     public void onStopLooking() {
-
+        Log.d("WindowContent", "Stop looking!");
     }
 
     @Override
     public void onLongLooking() {
-
+        Log.d("WindowContent", "Long looking");
     }
 }

@@ -10,7 +10,10 @@ public class Window extends ParentLayout {
         super(renderer, width, height, LayoutParams.VERTICAL);
 
         menu = new Menu(this);
-        content = new WindowContent(width, height-menu.getHeight());
-        addChild(content);
+        content = new WindowContent(this, width, height-Menu.HEIGHT);
+    }
+
+    public void close() {
+        renderer.getCurrentScene().removeChild(this);
     }
 }

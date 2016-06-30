@@ -1,7 +1,6 @@
 package gonmolon.desktopvr.vr;
 
 import org.rajawali3d.materials.Material;
-import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.Texture;
 import org.rajawali3d.primitives.Plane;
@@ -27,8 +26,7 @@ public abstract class Element extends Plane implements VRListener {
         startLooking = -1;
 
         material = new Material();
-        material.enableLighting(true);
-        material.setDiffuseMethod(new DiffuseMethod.Lambert());
+        material.enableLighting(false);
         setMaterial(material);
     }
 
@@ -47,6 +45,8 @@ public abstract class Element extends Plane implements VRListener {
         try {
             material.addTexture(new Texture("image", res));
             material.setColorInfluence(0);
+            setDoubleSided(true);
+            setRotY(180);
             setTransparent(true);
         } catch (ATexture.TextureException e) {
             e.printStackTrace();
@@ -93,9 +93,9 @@ public abstract class Element extends Plane implements VRListener {
             if(startLooking == -1) {
                 startLooking = now;
             }
-            if(startLooking != -1 && startLooking + 1000 <= now) {
+            if(startLooking > 0 && startLooking + 2000 <= now) {
                 onLongLooking();
-                startLooking = -1;
+                startLooking = 0;
             }
             return onLooking(x, y);
         }

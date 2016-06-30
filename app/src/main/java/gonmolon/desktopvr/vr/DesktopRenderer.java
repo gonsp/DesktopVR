@@ -31,13 +31,14 @@ public class DesktopRenderer extends VRRenderer {
 
         getCurrentCamera().setFarPlane(1000);
 
-        DirectionalLight light = new DirectionalLight(0f, -1f, -0.5f);
+        /*DirectionalLight light = new DirectionalLight(0f, -1f, -0.5f);
         light.setPower(2f);
         getCurrentScene().addLight(light);
+        */
 
         FloorGenerator.generate(this);
         pointer = new GazePointer(this);
-        window = new Window(this, 8, 5f);
+        window = new Window(this, 8f, 5f);
         window.setAngularPosition(90, 0, 5);
     }
 
@@ -84,18 +85,13 @@ public class DesktopRenderer extends VRRenderer {
         super.onRender(elapsedTime, deltaTime);
     }
 
-
-    @Override
-    public void onOffsetsChanged(float xOffset, float yOffset, float xOffsetStep, float yOffsetStep, int xPixelOffset, int yPixelOffset) {
-
-    }
-
-    @Override
-    public void onTouchEvent(MotionEvent event) {
-
-    }
-
     public void onCardboardTrigger() {
 
     }
+
+    @Override
+    public void onOffsetsChanged(float xOffset, float yOffset, float xOffsetStep, float yOffsetStep, int xPixelOffset, int yPixelOffset) {}
+
+    @Override
+    public void onTouchEvent(MotionEvent event) {}
 }
