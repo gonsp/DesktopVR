@@ -21,9 +21,9 @@ public abstract class Element extends Plane implements VRListener {
 
         this.width = width;
         this.height = height;
-        clickable = false;
-        isLookingAt = false;
+
         startLooking = -1;
+        setClickable(true);
 
         material = new Material();
         material.enableLighting(false);
@@ -102,9 +102,9 @@ public abstract class Element extends Plane implements VRListener {
         return false;
     }
 
-    public void setClickAt(double x, double y) {
+    public void setClickAt() {
         if(isClickable()) {
-            onClick(x, y);
+            onClick();
         }
     }
 

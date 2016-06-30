@@ -9,13 +9,12 @@ public class WindowContent extends Element {
 
     public WindowContent(Window parent, float width, float height) {
         super(parent, width, height);
-        setFocusable(true);
         setImage(R.drawable.desktop);
     }
 
 
     @Override
-    public void onClick(double x, double y) {
+    public void onClick() {
         Log.d("WindowContent", "Click registred!");
     }
 

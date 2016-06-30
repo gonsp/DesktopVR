@@ -1,5 +1,7 @@
 package gonmolon.desktopvr.vr;
 
+import org.rajawali3d.math.vector.Vector3;
+
 public class Button extends Element implements VRListener {
 
     private VRListener listener;
@@ -14,19 +16,19 @@ public class Button extends Element implements VRListener {
 
     public void setVRListener(VRListener listener) {
         this.listener = listener;
-        setFocusable(true);
+        setClickable(true);
     }
 
     @Override
-    public void onClick(double x, double y) {
+    public void onClick() {
         if(listener != null) {
-            listener.onClick(x, y);
+            listener.onClick();
         }
     }
 
     @Override
     public boolean onLooking(double x, double y) {
-        if(isFocusable()) {
+        if(listener != null) {
             return listener.onLooking(x, y);
         }
         return false;
@@ -34,6 +36,8 @@ public class Button extends Element implements VRListener {
 
     @Override
     public void onStartLooking() {
+        Vector3 actPos = getPosition();
+        setPosition(actPos.x, actPos.y, actPos.z + 0.1);
         if(listener != null) {
             listener.onStartLooking();
         }
@@ -41,6 +45,8 @@ public class Button extends Element implements VRListener {
 
     @Override
     public void onStopLooking() {
+        Vector3 actPos = getPosition();
+        setPosition(actPos.x, actPos.y, actPos.z - 0.1);
         if(listener != null) {
             listener.onStopLooking();
         }

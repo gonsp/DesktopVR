@@ -2,8 +2,6 @@ package gonmolon.desktopvr.vr;
 
 import android.graphics.Color;
 
-import gonmolon.desktopvr.R;
-
 public class Menu extends Layout {
 
     public static final float HEIGHT = 0.3f;
@@ -21,7 +19,7 @@ public class Menu extends Layout {
 
         closeButton.setVRListener(new VRListener() {
             @Override
-            public void onClick(double x, double y) {
+            public void onClick() {
                 window.close();
             }
 

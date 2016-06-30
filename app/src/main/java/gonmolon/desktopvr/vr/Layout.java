@@ -1,7 +1,5 @@
 package gonmolon.desktopvr.vr;
 
-import android.util.Log;
-
 import org.rajawali3d.math.vector.Vector3;
 
 public class Layout extends Element {
@@ -59,10 +57,9 @@ public class Layout extends Element {
     }
 
     @Override
-    public void onClick(double x, double y) {
-        Element element = getElementIn(x, y);
-        if(element != null) {
-            element.setClickAt(x - element.getPosition().x, y - element.getPosition().y);
+    public void onClick() {
+        if(childFocused != null) {
+            childFocused.setClickAt();
         }
     }
 
@@ -73,7 +70,7 @@ public class Layout extends Element {
         if(element != null) {
             focus = element.setLookingAt(true, x - element.getPosition().x, y - element.getPosition().y);
         }
-        if(childFocused != null && (element == null || element.getNumChildren() != childFocused.getNumChildren())) {
+        if(childFocused != null && (element == null || element != childFocused)) {
             childFocused.setLookingAt(false, 0, 0);
         }
         childFocused = element;
@@ -102,10 +99,12 @@ public class Layout extends Element {
         protected LayoutBackground(Layout layout, int color) {
             super(layout.width, layout.height);
             setBackgroundColor(color);
+            setClickable(false);
+            setFocusable(false);
         }
 
         @Override
-        public void onClick(double x, double y) {}
+        public void onClick() {}
 
         @Override
         public void onStartLooking() {}

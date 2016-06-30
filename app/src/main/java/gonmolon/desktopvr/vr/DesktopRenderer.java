@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import com.google.vr.sdk.base.Eye;
 import com.google.vr.sdk.base.HeadTransform;
 
-import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.math.vector.Vector3;
 
 public class DesktopRenderer extends VRRenderer {
@@ -31,27 +30,13 @@ public class DesktopRenderer extends VRRenderer {
 
         getCurrentCamera().setFarPlane(1000);
 
-        /*DirectionalLight light = new DirectionalLight(0f, -1f, -0.5f);
-        light.setPower(2f);
-        getCurrentScene().addLight(light);
-        */
-
         FloorGenerator.generate(this);
         pointer = new GazePointer(this);
         window = new Window(this, 8f, 5f);
-        window.setAngularPosition(90, 0, 5);
+        window.setAngularPosition(180, 0, 5);
     }
 
     public Vector3 getCameraDir() {
-        /*
-        Vector3 cameraDir = new Vector3();
-        mHeadViewQuaternion.fromMatrix(mHeadViewMatrix);
-        mHeadViewQuaternion.inverse();
-        cameraDir.setAll(0, 0, 1);
-        cameraDir.transform(mHeadViewQuaternion);
-        cameraDir.inverse();
-        return cameraDir;
-        */
         Vector3 cameraDir = new Vector3(pointer.getPosition());
         cameraDir.subtract(position);
         return cameraDir;
@@ -86,7 +71,9 @@ public class DesktopRenderer extends VRRenderer {
     }
 
     public void onCardboardTrigger() {
-
+        if(window.isLookingAt()) {
+            window.setClickAt();
+        }
     }
 
     @Override
