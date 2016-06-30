@@ -14,7 +14,7 @@ import gonmolon.desktopvr.R;
 
 public abstract class FloorGenerator {
 
-    public static SquareTerrain generate(DesktopRenderer renderer) {
+    public static SquareTerrain generate(DesktopRenderer renderer, boolean sky) {
         SquareTerrain floor;
         Bitmap bmp = BitmapFactory.decodeResource(renderer.getContext().getResources(), R.drawable.negy);
         try {
@@ -32,7 +32,9 @@ public abstract class FloorGenerator {
             floor.setMaterial(material);
             renderer.getCurrentScene().addChild(floor);
 
-            renderer.getCurrentScene().setSkybox(R.drawable.posx, R.drawable.negx, R.drawable.posy, R.drawable.negy, R.drawable.posz, R.drawable.negz);
+            if(sky) {
+                renderer.getCurrentScene().setSkybox(R.drawable.posx, R.drawable.negx, R.drawable.posy, R.drawable.negy, R.drawable.posz, R.drawable.negz);
+            }
 
             return floor;
         } catch (Exception e) {

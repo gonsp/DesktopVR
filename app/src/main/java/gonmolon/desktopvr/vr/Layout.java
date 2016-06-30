@@ -30,7 +30,7 @@ public class Layout extends Element {
         if(background == null) {
             background = new LayoutBackground(this, color);
             super.addChild(background);
-            //background.setPosition(0, 0, 0);
+            background.setPosition(0, 0, -0.001f);
         }
     }
 

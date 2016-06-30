@@ -2,6 +2,7 @@ package gonmolon.desktopvr.vr;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.vr.sdk.base.Eye;
@@ -12,7 +13,7 @@ import org.rajawali3d.math.vector.Vector3;
 public class DesktopRenderer extends VRRenderer {
 
     private GazePointer pointer;
-    private Window window;
+    private WindowManager windowManager;
 
     public Vector3 position;
     public Vector3 leftEyePos;
@@ -30,10 +31,9 @@ public class DesktopRenderer extends VRRenderer {
 
         getCurrentCamera().setFarPlane(1000);
 
-        FloorGenerator.generate(this);
+        FloorGenerator.generate(this, false);
         pointer = new GazePointer(this);
-        window = new Window(this, 8f, 5f);
-        window.setAngularPosition(180, 0, 5);
+        windowManager = new WindowManager(this);
     }
 
     public Vector3 getCameraDir() {
@@ -48,9 +48,10 @@ public class DesktopRenderer extends VRRenderer {
         position = new Vector3(rightEyePos);
         position.add(leftEyePos);
         position.divide(2.0f);
+
         if(pointer != null) {
             pointer.refresh();
-            pointer.setClickable(window.isLookingAt());
+            pointer.setClickable(windowManager.isLookingAt());
         }
     }
 
@@ -70,9 +71,20 @@ public class DesktopRenderer extends VRRenderer {
         super.onRender(elapsedTime, deltaTime);
     }
 
+    int testID = 1;
+
     public void onCardboardTrigger() {
-        if(window.isLookingAt()) {
-            window.setClickAt();
+        if(windowManager != null && windowManager.isLookingAt()) {
+            windowManager.setClickAt();
+        }
+        if(windowManager != null) {
+            Window test = new Window(this, 8, 5);
+            try {
+                windowManager.addWindow(test, testID++);
+                Log.d("HELLOU", "new window added");
+            } catch (WindowManagerException e) {
+                e.printStackTrace();
+            }
         }
     }
 

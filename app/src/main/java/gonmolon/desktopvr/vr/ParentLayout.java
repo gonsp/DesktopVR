@@ -12,8 +12,6 @@ public abstract class ParentLayout extends Layout {
 
         this.renderer = renderer;
         transformationMatrix = new double[3][3];
-
-        renderer.getCurrentScene().addChild(this);
     }
 
     public boolean isLookingAt() {
