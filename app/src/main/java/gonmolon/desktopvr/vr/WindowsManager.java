@@ -24,7 +24,6 @@ public class WindowsManager {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_USED);
         } else {
             windows.put(ID, window);
-            renderer.getCurrentScene().addChild(window);
             window.setAngularPosition(90, 0, 5);
         }
     }

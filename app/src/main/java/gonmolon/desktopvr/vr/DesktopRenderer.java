@@ -1,6 +1,7 @@
 package gonmolon.desktopvr.vr;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,6 +15,7 @@ public class DesktopRenderer extends VRRenderer {
 
     private GazePointer pointer;
     private WindowsManager windowManager;
+    private OptionsBox optionsBox;
 
     public Vector3 position;
     public Vector3 leftEyePos;
@@ -31,9 +33,10 @@ public class DesktopRenderer extends VRRenderer {
 
         getCurrentCamera().setFarPlane(1000);
 
-        FloorGenerator.generate(this, false);
+        FloorGenerator.generate(this, true);
         pointer = new GazePointer(this);
         windowManager = new WindowsManager(this);
+        optionsBox = new OptionsBox(this);
     }
 
     public Vector3 getCameraDir() {
@@ -51,7 +54,7 @@ public class DesktopRenderer extends VRRenderer {
 
         if(pointer != null) {
             pointer.refresh();
-            pointer.setClickable(windowManager.isLookingAt());
+            pointer.setClickable(windowManager.isLookingAt() || optionsBox.isLookingAt());
         }
     }
 
@@ -77,6 +80,9 @@ public class DesktopRenderer extends VRRenderer {
         if(windowManager != null && windowManager.isLookingAt()) {
             windowManager.setClickAt();
         }
+        if(optionsBox != null && optionsBox.isLookingAt()) {
+            optionsBox.setClickAt();
+        }
         if(windowManager != null) {
             Window test = new Window(this, 8, 5);
             try {
@@ -93,4 +99,8 @@ public class DesktopRenderer extends VRRenderer {
 
     @Override
     public void onTouchEvent(MotionEvent event) {}
+
+    public void close() {
+        ((Activity)getContext()).finish();
+    }
 }

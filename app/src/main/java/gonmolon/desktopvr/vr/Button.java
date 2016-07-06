@@ -4,6 +4,7 @@ import org.rajawali3d.math.vector.Vector3;
 
 public class Button extends Element implements VRListener {
 
+    private float focusZoom = 0.1f;
     private VRListener listener;
 
     public Button(float width, float height) {
@@ -17,6 +18,10 @@ public class Button extends Element implements VRListener {
     public void setVRListener(VRListener listener) {
         this.listener = listener;
         setClickable(true);
+    }
+
+    public void setFocusZoom(float focusZoom) {
+        this.focusZoom = focusZoom;
     }
 
     @Override
@@ -37,7 +42,7 @@ public class Button extends Element implements VRListener {
     @Override
     public void onStartLooking() {
         Vector3 actPos = getPosition();
-        setPosition(actPos.x, actPos.y, actPos.z + 0.1);
+        setPosition(actPos.x, actPos.y, actPos.z + focusZoom);
         if(listener != null) {
             listener.onStartLooking();
         }
@@ -46,7 +51,7 @@ public class Button extends Element implements VRListener {
     @Override
     public void onStopLooking() {
         Vector3 actPos = getPosition();
-        setPosition(actPos.x, actPos.y, actPos.z - 0.1);
+        setPosition(actPos.x, actPos.y, actPos.z - focusZoom);
         if(listener != null) {
             listener.onStopLooking();
         }

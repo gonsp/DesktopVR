@@ -12,16 +12,18 @@ public abstract class ParentLayout extends Layout {
 
         this.renderer = renderer;
         transformationMatrix = new double[3][3];
+
+        renderer.getCurrentScene().addChild(this);
     }
 
     public boolean isLookingAt() {
         Vector3 cameraPos = new Vector3(renderer.position);
         Vector3 cameraDir = new Vector3(renderer.getCameraDir());
-        Vector3 windowPos = new Vector3(getPosition());
-        Vector3 windowDir = getDir();
-        double t = windowDir.dot(windowPos.subtract(cameraPos)) / windowDir.dot(cameraDir);
+        Vector3 layoutPos = new Vector3(getPosition());
+        Vector3 layoutDir = getDir();
+        double t = layoutDir.dot(layoutPos.subtract(cameraPos)) / layoutDir.dot(cameraDir);
         Vector3 intersection = cameraPos.add(cameraDir.multiply(t));
-        intersection.subtract(windowPos);
+        intersection.subtract(layoutPos);
         Vector3 relativePosition = transformPosition(intersection);
         return setLookingAt(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2, relativePosition.x, relativePosition.y);
     }

@@ -6,7 +6,7 @@ public class Layout extends Element {
 
     private LayoutParams orientation;
     private LayoutBackground background;
-    private float offset;
+    protected float offset;
     private Element childFocused;
 
     public Layout(float width, float height, LayoutParams orientation) {
@@ -30,7 +30,7 @@ public class Layout extends Element {
         if(background == null) {
             background = new LayoutBackground(this, color);
             super.addChild(background);
-            background.setPosition(0, 0, -0.001f);
+            background.setPosition(0, 0, -0.1f);
         }
     }
 
