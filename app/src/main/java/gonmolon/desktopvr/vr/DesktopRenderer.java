@@ -3,7 +3,6 @@ package gonmolon.desktopvr.vr;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.google.vr.sdk.base.Eye;
@@ -37,6 +36,12 @@ public class DesktopRenderer extends VRRenderer {
         pointer = new GazePointer(this);
         windowManager = new WindowsManager(this);
         optionsBox = new OptionsBox(this);
+
+        try {
+            windowManager.addWindow(1);
+        } catch (WindowsManagerException e) {
+            e.printStackTrace();
+        }
     }
 
     public Vector3 getCameraDir() {
@@ -74,8 +79,6 @@ public class DesktopRenderer extends VRRenderer {
         super.onRender(elapsedTime, deltaTime);
     }
 
-    int testID = 1;
-
     public void onCardboardTrigger() {
         if(windowManager != null && windowManager.isLookingAt()) {
             windowManager.setClickAt();
@@ -83,15 +86,10 @@ public class DesktopRenderer extends VRRenderer {
         if(optionsBox != null && optionsBox.isLookingAt()) {
             optionsBox.setClickAt();
         }
-        if(windowManager != null) {
-            Window test = new Window(this, 8, 5);
-            try {
-                windowManager.addWindow(test, testID++);
-                Log.d("HELLOU", "new window added");
-            } catch (WindowsManagerException e) {
-                e.printStackTrace();
-            }
-        }
+    }
+
+    public void close() {
+        ((Activity)getContext()).finish();
     }
 
     @Override
@@ -99,8 +97,4 @@ public class DesktopRenderer extends VRRenderer {
 
     @Override
     public void onTouchEvent(MotionEvent event) {}
-
-    public void close() {
-        ((Activity)getContext()).finish();
-    }
 }

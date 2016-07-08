@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class WindowsManager {
+
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
 
@@ -17,32 +18,34 @@ public class WindowsManager {
         return new WindowsIterator(this);
     }
 
-    public void addWindow(Window window, int ID) throws WindowsManagerException {
-        if(ID < 0) {
+    public void addWindow(int PID) throws WindowsManagerException {
+        if(PID < 0) {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
-        } else if(windows.containsKey(ID)) {
+        } else if(windows.containsKey(PID)) {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_USED);
         } else {
-            windows.put(ID, window);
+            Window window = new Window(this, 8, 5, PID);
             window.setAngularPosition(90, 0, 5);
+            windows.put(PID, window);
         }
     }
 
-    public void removeWindow(int ID) throws WindowsManagerException {
-        if(ID < 0) {
+    public void removeWindow(int PID) throws WindowsManagerException {
+        if(PID < 0) {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
-        } else if (windows.containsKey(ID)) {
-            windows.remove(ID);
+        } else if (windows.containsKey(PID)) {
+            renderer.getCurrentScene().removeChild(windows.get(PID));
+            windows.remove(PID);
         } else {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_NONEXISTENT);
         }
     }
 
-    public Window getWindow(int ID) throws WindowsManagerException {
-        if (ID < 0) {
+    public Window getWindow(int PID) throws WindowsManagerException {
+        if (PID < 0) {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
-        } else if (windows.containsKey(ID)) {
-            return windows.get(ID);
+        } else if (windows.containsKey(PID)) {
+            return windows.get(PID);
         } else {
             throw new WindowsManagerException(WindowsManagerException.Error.ID_NONEXISTENT);
         }
@@ -68,6 +71,10 @@ public class WindowsManager {
                 window.setClickAt();
             }
         }
+    }
+
+    public DesktopRenderer getRenderer() {
+        return renderer;
     }
 
     public class WindowsIterator implements Iterator {
