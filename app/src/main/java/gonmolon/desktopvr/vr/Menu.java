@@ -15,8 +15,8 @@ public class Menu extends Layout {
         closeButton = new Button(this, HEIGHT, HEIGHT);
         minimizeButton = new Button(this, HEIGHT, HEIGHT);
 
-        closeButton.setImage(R.drawable.close);
-        minimizeButton.setImage(R.drawable.minimize);
+        closeButton.setImage(R.drawable.close, true);
+        minimizeButton.setImage(R.drawable.minimize, true);
 
         closeButton.setVRListener(new VRListenerAdapter() {
             @Override
@@ -24,7 +24,5 @@ public class Menu extends Layout {
                 window.close();
             }
         });
-
-        //setBackgroundColor(Color.BLUE);
     }
 }

@@ -32,13 +32,16 @@ public class DesktopRenderer extends VRRenderer {
 
         getCurrentCamera().setFarPlane(1000);
 
-        FloorGenerator.generate(this, true);
+        FloorGenerator.generate(this, false);
         pointer = new GazePointer(this);
         windowManager = new WindowsManager(this);
         optionsBox = new OptionsBox(this);
 
         try {
-            windowManager.addWindow(1);
+            for(int i = 0; i < 10; ++i) {
+                windowManager.addWindow(i);
+            }
+            windowManager.refresh();
         } catch (WindowsManagerException e) {
             e.printStackTrace();
         }

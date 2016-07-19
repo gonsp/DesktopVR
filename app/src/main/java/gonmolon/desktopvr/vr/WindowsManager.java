@@ -69,12 +69,46 @@ public class WindowsManager {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
                 window.setClickAt();
+                return;
             }
         }
     }
 
     public DesktopRenderer getRenderer() {
         return renderer;
+    }
+
+    private void allocateWindow(Window window) {
+
+    }
+
+    public void refresh() {
+        double rad = 0;
+        final double incr = 360/windows.size();
+        Iterator i = getIterator();
+        while(i.hasNext()) {
+            Window window = (Window) i.next();
+            window.setAngularPosition(rad, 0, 10);
+            rad += incr;
+        }
+    }
+
+    public void setWindowFocused(int PID) {
+        Iterator i = getIterator();
+        while(i.hasNext()) {
+            Window window = (Window) i.next();
+            if(window.getPID() != PID && window.getDistancePos() < 10) {
+                window.setAngularPosition(window.getAngle(), window.getHeightPos(), 10);
+            }
+        }
+        try {
+            Window window = getWindow(PID);
+            if(window.getHeightPos() != 0 || window.getDistancePos() > 5) {
+                window.setAngularPosition(window.getAngle(), 0, 5);
+            }
+        } catch (WindowsManagerException e) {
+            e.printStackTrace();
+        }
     }
 
     public class WindowsIterator implements Iterator {

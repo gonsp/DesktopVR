@@ -21,8 +21,8 @@ public class OptionsBox extends ParentLayout {
         settingsButton = new Button(this, HEIGHT, HEIGHT);
         settingsButton.setFocusZoom(0.5f);
 
-        closeButton.setImage(R.drawable.close);
-        settingsButton.setImage(R.drawable.settings);
+        closeButton.setImage(R.drawable.close, true);
+        settingsButton.setImage(R.drawable.settings, true);
 
         closeButton.setVRListener(new VRListenerAdapter() {
             @Override

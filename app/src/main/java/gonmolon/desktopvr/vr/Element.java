@@ -1,5 +1,10 @@
 package gonmolon.desktopvr.vr;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.util.Log;
+
+import org.rajawali3d.BufferInfo;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.Texture;
@@ -41,13 +46,11 @@ public abstract class Element extends Plane implements VRListener {
         setTransparent(false);
     }
 
-    public void setImage(int res) {
+    public void setImage(int res, boolean transparent) {
         try {
             material.addTexture(new Texture("image", res));
             material.setColorInfluence(0);
-            setDoubleSided(true);
-            setRotY(180);
-            setTransparent(true);
+            setTransparent(transparent);
         } catch (ATexture.TextureException e) {
             e.printStackTrace();
         }

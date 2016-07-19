@@ -6,6 +6,9 @@ public abstract class ParentLayout extends Layout {
 
     protected DesktopRenderer renderer;
     double[][] transformationMatrix;
+    private double angle;
+    private double height_pos;
+    private double distance_pos;
 
     public ParentLayout(DesktopRenderer renderer, float width, float height, LayoutParams orientation) {
         super(width, height, orientation);
@@ -25,7 +28,7 @@ public abstract class ParentLayout extends Layout {
         Vector3 intersection = cameraPos.add(cameraDir.multiply(t));
         intersection.subtract(layoutPos);
         Vector3 relativePosition = transformPosition(intersection);
-        return setLookingAt(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2, relativePosition.x, relativePosition.y);
+        return setLookingAt(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2, -relativePosition.x, relativePosition.y);
     }
 
     private Vector3 getDir() {
@@ -45,6 +48,9 @@ public abstract class ParentLayout extends Layout {
     }
 
     public void setAngularPosition(double angle, double height, double distance) {
+        this.angle = angle;
+        this.height_pos = height;
+        this.distance_pos = distance;
         angle = (angle/360)*2*Math.PI;
         Vector3 pos = new Vector3(distance, 0, 0);
         pos.rotateY(angle);
@@ -75,5 +81,17 @@ public abstract class ParentLayout extends Layout {
         transformationMatrix[2][0] = v3.x;
         transformationMatrix[2][1] = v3.y;
         transformationMatrix[2][2] = v3.z;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public double getHeightPos() {
+        return height_pos;
+    }
+
+    public double getDistancePos() {
+        return distance_pos;
     }
 }
