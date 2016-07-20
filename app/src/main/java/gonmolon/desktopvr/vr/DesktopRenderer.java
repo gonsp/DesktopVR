@@ -22,6 +22,7 @@ public class DesktopRenderer extends VRRenderer {
 
     public DesktopRenderer(Context context) {
         super(context);
+        windowManager = new WindowsManager(this);
     }
 
     @Override
@@ -32,9 +33,8 @@ public class DesktopRenderer extends VRRenderer {
 
         getCurrentCamera().setFarPlane(1000);
 
-        FloorGenerator.generate(this, false);
+        FloorGenerator.generate(this, true);
         pointer = new GazePointer(this);
-        windowManager = new WindowsManager(this);
         optionsBox = new OptionsBox(this);
 
         try {

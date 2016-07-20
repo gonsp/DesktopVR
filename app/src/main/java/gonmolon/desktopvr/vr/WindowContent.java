@@ -10,10 +10,8 @@ public class WindowContent extends Element {
 
     public WindowContent(Window parent, float width, float height) {
         super(parent, width, height);
-        //setBackgroundColor(Color.argb(1, (int) (Math.random()*255), (int) (Math.random()*255), (int) (Math.random()*255)));
         setImage(R.drawable.desktop, false);
     }
-
 
     @Override
     public void onClick() {

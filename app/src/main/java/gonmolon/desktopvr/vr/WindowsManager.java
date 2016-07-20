@@ -4,14 +4,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import gonmolon.desktopvr.vnc.VNCClient;
+
 public class WindowsManager {
 
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
+    private int focus;
+    VNCClient vncClient;
 
     public WindowsManager(DesktopRenderer renderer) {
         this.renderer = renderer;
         windows = new HashMap<>();
+        focus = -1;
+        vncClient = new VNCClient(renderer.getContext());
     }
 
     public Iterator getIterator() {
@@ -52,15 +58,17 @@ public class WindowsManager {
     }
 
     public boolean isLookingAt() {
-        boolean focus = false;
+        focus = -1;
         Iterator i = getIterator();
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
-                focus = true;
+                focus = window.getPID();
+                window.updateContent(vncClient.getFrame());
+                return true;
             }
         }
-        return focus;
+        return false;
     }
 
     public void setClickAt() {
