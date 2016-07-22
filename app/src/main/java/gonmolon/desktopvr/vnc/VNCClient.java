@@ -22,11 +22,10 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
-        connect();
+        connect("192.168.43.19");
     }
 
-    private void connect() {
-        final String ipAddress = "192.168.43.19";
+    private void connect(final String ipAddress) {
         final int tcpPort = 5900;
 
         if(!SdkThread.getInstance().initComplete()) {

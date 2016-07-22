@@ -13,7 +13,7 @@ import org.rajawali3d.math.vector.Vector3;
 public class DesktopRenderer extends VRRenderer {
 
     private GazePointer pointer;
-    private WindowsManager windowManager;
+    private WindowManager windowManager;
     private OptionsBox optionsBox;
 
     public Vector3 position;
@@ -22,7 +22,7 @@ public class DesktopRenderer extends VRRenderer {
 
     public DesktopRenderer(Context context) {
         super(context);
-        windowManager = new WindowsManager(this);
+        windowManager = new WindowManager(this);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DesktopRenderer extends VRRenderer {
                 windowManager.addWindow(i);
             }
             windowManager.refresh();
-        } catch (WindowsManagerException e) {
+        } catch (WindowManagerException e) {
             e.printStackTrace();
         }
     }

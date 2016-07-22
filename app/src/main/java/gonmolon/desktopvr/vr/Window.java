@@ -4,28 +4,28 @@ import android.graphics.Bitmap;
 
 public class Window extends ParentLayout {
 
-    private WindowsManager windowsManager;
+    private WindowManager windowManager;
     private int PID;
     private Menu menu;
     private WindowContent content;
 
-    public Window(final WindowsManager windowsManager, float width, float height, final int PID) {
-        super(windowsManager.getRenderer(), width, height, LayoutParams.VERTICAL);
-        this.windowsManager = windowsManager;
+    public Window(final WindowManager windowManager, float width, float height, final int PID) {
+        super(windowManager.getRenderer(), width, height, LayoutParams.VERTICAL);
+        this.windowManager = windowManager;
         this.PID = PID;
         menu = new Menu(this);
         content = new WindowContent(this, width, height-Menu.HEIGHT) {
             @Override
             public void onClick() {
-                windowsManager.setWindowFocused(PID);
+                windowManager.setWindowFocused(PID);
             }
         };
     }
 
     public void close() {
         try {
-            windowsManager.removeWindow(PID);
-        } catch (WindowsManagerException e) {
+            windowManager.removeWindow(PID);
+        } catch (WindowManagerException e) {
             e.printStackTrace();
         }
     }

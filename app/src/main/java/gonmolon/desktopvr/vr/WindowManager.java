@@ -4,31 +4,30 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import gonmolon.desktopvr.vnc.FrameProvider;
 import gonmolon.desktopvr.vnc.VNCClient;
 
-public class WindowsManager {
+public class WindowManager {
 
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
-    private int focus;
-    VNCClient vncClient;
+    private FrameProvider frameProvider;
 
-    public WindowsManager(DesktopRenderer renderer) {
+    public WindowManager(DesktopRenderer renderer) {
         this.renderer = renderer;
         windows = new HashMap<>();
-        focus = -1;
-        vncClient = new VNCClient(renderer.getContext());
+        frameProvider = new FrameProvider(renderer.getContext());
     }
 
     public Iterator getIterator() {
         return new WindowsIterator(this);
     }
 
-    public void addWindow(int PID) throws WindowsManagerException {
+    public void addWindow(int PID) throws WindowManagerException {
         if(PID < 0) {
-            throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
+            throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
         } else if(windows.containsKey(PID)) {
-            throw new WindowsManagerException(WindowsManagerException.Error.ID_USED);
+            throw new WindowManagerException(WindowManagerException.Error.ID_USED);
         } else {
             Window window = new Window(this, 8, 5, PID);
             window.setAngularPosition(90, 0, 5);
@@ -36,35 +35,33 @@ public class WindowsManager {
         }
     }
 
-    public void removeWindow(int PID) throws WindowsManagerException {
+    public void removeWindow(int PID) throws WindowManagerException {
         if(PID < 0) {
-            throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
+            throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
         } else if (windows.containsKey(PID)) {
             renderer.getCurrentScene().removeChild(windows.get(PID));
             windows.remove(PID);
         } else {
-            throw new WindowsManagerException(WindowsManagerException.Error.ID_NONEXISTENT);
+            throw new WindowManagerException(WindowManagerException.Error.ID_NONEXISTENT);
         }
     }
 
-    public Window getWindow(int PID) throws WindowsManagerException {
+    public Window getWindow(int PID) throws WindowManagerException {
         if (PID < 0) {
-            throw new WindowsManagerException(WindowsManagerException.Error.ID_INVALID);
+            throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
         } else if (windows.containsKey(PID)) {
             return windows.get(PID);
         } else {
-            throw new WindowsManagerException(WindowsManagerException.Error.ID_NONEXISTENT);
+            throw new WindowManagerException(WindowManagerException.Error.ID_NONEXISTENT);
         }
     }
 
     public boolean isLookingAt() {
-        focus = -1;
         Iterator i = getIterator();
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
-                focus = window.getPID();
-                window.updateContent(vncClient.getFrame());
+                window.updateContent(frameProvider.getFrame(window.getPID()));
                 return true;
             }
         }
@@ -114,7 +111,7 @@ public class WindowsManager {
             if(window.getHeightPos() != 0 || window.getDistancePos() > 5) {
                 window.setAngularPosition(window.getAngle(), 0, 5);
             }
-        } catch (WindowsManagerException e) {
+        } catch (WindowManagerException e) {
             e.printStackTrace();
         }
     }
@@ -123,7 +120,7 @@ public class WindowsManager {
 
         private Iterator<Map.Entry<Integer, Window>> iterator;
 
-        private WindowsIterator(WindowsManager manager) {
+        private WindowsIterator(WindowManager manager) {
             iterator = manager.windows.entrySet().iterator();
         }
 
