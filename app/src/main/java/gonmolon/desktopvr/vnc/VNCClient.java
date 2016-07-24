@@ -15,14 +15,16 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     private DirectTcpConnector connector;
     private Bitmap frame;
 
-    public VNCClient(Context context) {
-        SdkThread.getInstance().init(context.getFilesDir().getAbsolutePath() + "dataStore", this);
+    public VNCClient(Context context, String ipAddress) {
+        /*SdkThread.getInstance().init(context.getFilesDir().getAbsolutePath() + "dataStore", this);
         try {
             viewer = new Viewer();
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
-        connect("192.168.43.19");
+        connect(ipAddress);
+        */
+        serverFbSizeChanged(null, 1024, 768);
     }
 
     private void connect(final String ipAddress) {

@@ -1,10 +1,21 @@
 package gonmolon.desktopvr.vr;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import gonmolon.desktopvr.vnc.FrameProvider;
+import gonmolon.desktopvr.vnc.Utils;
 import gonmolon.desktopvr.vnc.VNCClient;
 
 public class WindowManager {
@@ -12,11 +23,17 @@ public class WindowManager {
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
     private FrameProvider frameProvider;
+    private String ipAddress;
+    private final String tcpPort = "8080";
+    private WindowListProvider windowListProvider;
 
-    public WindowManager(DesktopRenderer renderer) {
+    public WindowManager(DesktopRenderer renderer, String ipAddress) {
         this.renderer = renderer;
+        this.ipAddress = ipAddress;
         windows = new HashMap<>();
-        frameProvider = new FrameProvider(renderer.getContext());
+        frameProvider = new FrameProvider(renderer.getContext(), ipAddress);
+        windowListProvider = new WindowListProvider();
+        windowListProvider.execute((Void[]) null);
     }
 
     public Iterator getIterator() {
@@ -137,6 +154,49 @@ public class WindowManager {
         @Override
         public void remove() {
             iterator.remove();
+        }
+    }
+
+    public class WindowListProvider extends AsyncTask<Void, Void, Void> {
+
+        private boolean connected;
+
+        @Override
+        protected void onPreExecute() {
+            try {
+                Utils.GET(ipAddress, tcpPort, "connect");
+                connected = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                connected = false;
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            while(connected) {
+                try {
+                    String output = Utils.GET(ipAddress, tcpPort, "getWindowList");
+                    if(output.length() > 0) {
+                        for(String s : output.split("#")) {
+                            String PID = s.split(",")[0];
+                            int pid = Integer.valueOf(PID);
+                            try {
+                                WindowManager.this.addWindow(pid);
+                            } catch (WindowManagerException e) {}
+                        }
+                        refresh();
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
         }
     }
 }

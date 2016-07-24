@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.protobuf'
 
 android {
     compileSdkVersion 23
@@ -26,39 +25,19 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
     compile files('libs/vncsdk.jar')
-    compile 'io.grpc:grpc-okhttp:0.14.0'
-    compile 'io.grpc:grpc-protobuf-nano:0.14.0'
-    compile 'io.grpc:grpc-stub:0.14.0'
 }
 
 dependencies {
-    compile(name:'audio', ext:'aar')
-    compile(name:'common', ext:'aar')
-    compile(name:'base', ext:'aar')
+    compile(name: 'audio', ext: 'aar')
+    compile(name: 'common', ext: 'aar')
+    compile(name: 'base', ext: 'aar')
 }
 
-protobuf {
-    protoc {
-        // The version of protoc must match protobuf-java. If you don't depend on
-        // protobuf-java directly, you will be transitively depending on the
-        // protobuf-java version that grpc depends on.
-        artifact = "com.google.protobuf:protoc:3.0.0-beta-2"
-    }
-    plugins {
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:0.14.0'
-        }
-    }
-    generateProtoTasks {
-        all()*.plugins {
-            grpc {}
-        }
-    }
-}
-
-
-repositories{
-    flatDir{
+repositories {
+    flatDir {
         dirs 'libs'
     }
+}
+dependencies {
+    compile 'com.firebase:firebase-client-android:2.3.1'
 }

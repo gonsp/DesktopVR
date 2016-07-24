@@ -22,7 +22,6 @@ public class DesktopRenderer extends VRRenderer {
 
     public DesktopRenderer(Context context) {
         super(context);
-        windowManager = new WindowManager(this);
     }
 
     @Override
@@ -36,15 +35,7 @@ public class DesktopRenderer extends VRRenderer {
         FloorGenerator.generate(this, true);
         pointer = new GazePointer(this);
         optionsBox = new OptionsBox(this);
-
-        try {
-            for(int i = 0; i < 10; ++i) {
-                windowManager.addWindow(i);
-            }
-            windowManager.refresh();
-        } catch (WindowManagerException e) {
-            e.printStackTrace();
-        }
+        windowManager = new WindowManager(this, "192.168.10.101");
     }
 
     public Vector3 getCameraDir() {
