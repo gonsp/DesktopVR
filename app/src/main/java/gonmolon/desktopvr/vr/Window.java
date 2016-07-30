@@ -35,6 +35,6 @@ public class Window extends ParentLayout {
     }
 
     public void updateContent(Bitmap frame) {
-        content.setImage(frame, false);
+        content.setImage(null, false);
     }
 }

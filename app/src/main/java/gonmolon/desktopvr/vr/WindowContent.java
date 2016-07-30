@@ -4,13 +4,11 @@ package gonmolon.desktopvr.vr;
 import android.graphics.Color;
 import android.util.Log;
 
-import gonmolon.desktopvr.R;
-
 public class WindowContent extends Element {
 
     public WindowContent(Window parent, float width, float height) {
         super(parent, width, height);
-        setImage(R.drawable.desktop, false);
+        setBackgroundColor(Color.BLUE);
     }
 
     @Override

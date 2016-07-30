@@ -3,63 +3,83 @@ package gonmolon.desktopvr.vnc;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.View;
 
 import com.realvnc.vncsdk.DirectTcpConnector;
+import com.realvnc.vncsdk.ImmutableDataBuffer;
 import com.realvnc.vncsdk.Library;
 import com.realvnc.vncsdk.PixelFormat;
 import com.realvnc.vncsdk.Viewer;
 
-public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback {
+import java.util.EnumSet;
+import java.util.Iterator;
+
+public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback, Viewer.AuthenticationCallback, Viewer.PeerVerificationCallback {
 
     private Viewer viewer;
     private DirectTcpConnector connector;
     private Bitmap frame;
+    private boolean updated;
 
     public VNCClient(Context context, String ipAddress) {
-        /*SdkThread.getInstance().init(context.getFilesDir().getAbsolutePath() + "dataStore", this);
+        updated = false;
+        SdkThread.getInstance().init(context.getFilesDir().getAbsolutePath() + "dataStore", this);
         try {
             viewer = new Viewer();
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
         connect(ipAddress);
-        */
-        serverFbSizeChanged(null, 1024, 768);
     }
 
     private void connect(final String ipAddress) {
         final int tcpPort = 5900;
 
-        if(!SdkThread.getInstance().initComplete()) {
+        if (!SdkThread.getInstance().initComplete()) {
             return;
         }
 
         SdkThread.getInstance().post(new Runnable() {
             @Override
             public void run() {
-
-                SdkThread.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Library.enableAddOn("gc2DACnMx2xpaEiQXrU.gc2PXKcdUZ37RPsNEHL.devEX1Sg2Txs1CgVuW4.gc2AKkgvZPsNiozy1Hu");
-                        } catch (Library.VncException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                    }
-                });
-
                 try {
+                    Library.enableAddOn("TC2MxFwH1OATXGPHECgBRtEB/eGe+KE+qNS9zgOqtukmBLX9+rQRndAc/qfOeAO8a8Od1NPnPE++voZtrcDO2dKa1hRrPcS+SkPLdi+OhUIuZCH6Zo5XhReh/mqoY6SiAwTPlpC+CMVEJ3Bc6wNUhhRTg6VYL9qpbsjDoNxXLXlNWRtoxnFOyLblEAPKs8E7lJhxOs5UyshjJCWaSEmC9xYmkoSICxx5biPdXXfytblILf+BS9Ml0sEktTu2CS47UCcSPoIHSe2yPIPOcoCiC5m6fHitOwjs0ZWXaXIs3CVkMhtmDbyDJwYxq+1RL8GNHZdPMFisImuYX18hpiijq9yOGN+isEbSuXKdDK5C31ujS3LdyimtVeMrY01i4Wzg3YPN4UAUS5a9ycpyJ680wiYAdR57YJrYds6vSiH+dUCegeUZaAlNKAcM2/frxVtIx353L9oxh3tVavWTlr326f9SUjsRfNeOrW+U8RPdHi/X2H771EplUbBm2Q7ixVi+JaYASmYOrRgT7Q9Ju8Vqe+L23vlL2glBpIXCTqd1WFCIZCLicnzGEZ9CcViIcnbiZQMp2pdt9aQ2al9g7rgm6ZfUTsdm6JhXeSW4Lw8QuI5kqg/eQYYaf5NztuVhqO9v9FfBTGE064t0uyuh6Ok11/NHa+IEFrs9rlvudg/g1GQ=");
+
+                    viewer.setConnectionCallback(new Viewer.ConnectionCallback() {
+                        @Override
+                        public void connecting(Viewer viewer) {
+                            Log.d("VNC", "CONNECTING");
+                        }
+
+                        @Override
+                        public void connected(Viewer viewer) {
+                            Log.d("VNC", "CONNECTED!!!!");
+                        }
+
+                        @Override
+                        public void disconnected(Viewer viewer, String s, EnumSet<Viewer.DisconnectFlags> enumSet) {
+                            Log.d("VNC", "DISCONNECTED: " + s);
+                            final String disconnectMsg = viewer.getDisconnectMessage() == null ?
+                                    viewer.getDisconnectReason() :
+                                    String.format("%s, %s", viewer.getDisconnectReason(), viewer.getDisconnectMessage());
+                            Log.d("VNC", disconnectMsg);
+
+                            Iterator iterator = enumSet.iterator();
+                            while(iterator.hasNext()) {
+                                Log.d("VNC", "Flag: " + ((Viewer.DisconnectFlags)iterator.next()).name());
+                            }
+                        }
+                    });
+                    viewer.setAuthenticationCallback(VNCClient.this);
                     viewer.setFramebufferCallback(VNCClient.this);
+                    viewer.setPeerVerificationCallback(VNCClient.this);
 
                     VNCClient.this.serverFbSizeChanged(viewer, 1024, 768);
 
                     connector = new DirectTcpConnector();
                     connector.connect(ipAddress, tcpPort, viewer.getConnectionHandler());
-
                 } catch (Library.VncException e) {
-                    Log.e("VNC", "Connection error");
+                    Log.e("VNC", "Exception in connection");
                     e.printStackTrace();
                 }
             }
@@ -67,7 +87,12 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     }
 
     public Bitmap getFrame() {
-        return frame;
+        if(updated) {
+            updated = false;
+            return frame;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -75,13 +100,12 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
         Log.e("VNC", "serverFbSizeChanged");
         frame = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         frame.setHasAlpha(false);
-        /*try {
+        try {
             viewer.setViewerFb(null, PixelFormat.bgr888(), w, h, 0);
             Log.e("VNC", "Biene");
         } catch (Library.VncException e) {
-            Log.e("VNC", "MAL");
             e.printStackTrace();
-        }*/
+        }
         Log.e("VNC", "serverFbSizeChanged finished");
     }
 
@@ -95,12 +119,54 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
                 e.printStackTrace();
             }
         }
+        updated = true;
         Log.e("VNC", "viewerFbUpdated finished");
-        while(true);
     }
 
     @Override
     public void displayMessage(int msgId, String error) {
         Log.e("VNC", error);
+    }
+
+    @Override
+    public void requestUserCredentials(final Viewer viewer, boolean needUser, boolean needPassword) {
+        Log.d("VNC", "needUser: " + needUser);
+        Log.d("VNC", "needPassword: " + needPassword);
+        SdkThread.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    viewer.sendAuthenticationResponse(true, "", "");
+                } catch (Library.VncException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void cancelUserCredentialsRequest(Viewer viewer) {
+        Log.d("VNC", "HELLOUUUUUUUUUUU: cancelUserCredentialsRequest");
+    }
+
+
+    @Override
+    public void verifyPeer(final Viewer viewer, final String hexFingerprint, final String catchphraseFingerprint, ImmutableDataBuffer serverRsaPublic) {
+        Log.d("VNC", "HELLOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
+        SdkThread.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    viewer.sendPeerVerificationResponse(true);
+                } catch (Library.VncException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void cancelPeerVerification(Viewer viewer) {
+        Log.d("VNC", "HELLOUUUUUUUUUUU: cancelPeerVerification");
     }
 }

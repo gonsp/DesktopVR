@@ -35,7 +35,7 @@ public class DesktopRenderer extends VRRenderer {
         FloorGenerator.generate(this, true);
         pointer = new GazePointer(this);
         optionsBox = new OptionsBox(this);
-        windowManager = new WindowManager(this, "192.168.10.101");
+        windowManager = new WindowManager(this, "192.168.43.19");
     }
 
     public Vector3 getCameraDir() {

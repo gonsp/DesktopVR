@@ -27,7 +27,7 @@ public class FrameProvider {
 
     private void focusWindow(int PID) {
         try {
-            Utils.GET(ipAddress, tcpPort, "focus/\" + PID");
+            Utils.GET(ipAddress, tcpPort, "focus/" + PID);
         } catch (Exception e) {
             e.printStackTrace();
         }

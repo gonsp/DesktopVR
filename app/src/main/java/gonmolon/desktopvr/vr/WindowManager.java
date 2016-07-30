@@ -33,7 +33,6 @@ public class WindowManager {
         windows = new HashMap<>();
         frameProvider = new FrameProvider(renderer.getContext(), ipAddress);
         windowListProvider = new WindowListProvider();
-        windowListProvider.execute((Void[]) null);
     }
 
     public Iterator getIterator() {
@@ -161,10 +160,15 @@ public class WindowManager {
 
         private boolean connected;
 
+        public WindowListProvider() {
+            execute((Void[]) null);
+        }
+
         @Override
         protected void onPreExecute() {
             try {
                 Utils.GET(ipAddress, tcpPort, "connect");
+                Log.d("PID", "connected");
                 connected = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -180,6 +184,7 @@ public class WindowManager {
                     if(output.length() > 0) {
                         for(String s : output.split("#")) {
                             String PID = s.split(",")[0];
+                            Log.d("PID", PID);
                             int pid = Integer.valueOf(PID);
                             try {
                                 WindowManager.this.addWindow(pid);
