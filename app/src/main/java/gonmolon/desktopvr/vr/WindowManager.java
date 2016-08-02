@@ -48,6 +48,7 @@ public class WindowManager {
             Window window = new Window(this, 8, 5, PID);
             window.setAngularPosition(90, 0, 5);
             windows.put(PID, window);
+            window.updateContent(frameProvider.getFrame(window.getPID()));
         }
     }
 

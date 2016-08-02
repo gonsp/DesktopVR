@@ -63,8 +63,6 @@ public abstract class Element extends Plane implements VRListener {
     public void setImage(Bitmap bitmap, boolean transparent) {
         if(bitmap != null) {
             setTexture(new Texture("image", bitmap), transparent);
-        } else {
-            //Log.d("VNC", "Bitmap null!");
         }
     }
 

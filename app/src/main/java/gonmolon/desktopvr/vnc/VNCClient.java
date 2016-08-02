@@ -57,14 +57,9 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
                         }
 
                         @Override
-                        public void disconnected(Viewer viewer, String s, EnumSet<Viewer.DisconnectFlags> enumSet) {
-                            Log.d("VNC", "DISCONNECTED: " + s);
-                            final String disconnectMsg = viewer.getDisconnectMessage() == null ?
-                                    viewer.getDisconnectReason() :
-                                    String.format("%s, %s", viewer.getDisconnectReason(), viewer.getDisconnectMessage());
-                            Log.d("VNC", disconnectMsg);
-
-                            Iterator iterator = enumSet.iterator();
+                        public void disconnected(Viewer viewer, String msg, EnumSet<Viewer.DisconnectFlags> flags) {
+                            Log.d("VNC", "DISCONNECTED: " + msg);
+                            Iterator iterator = flags.iterator();
                             while(iterator.hasNext()) {
                                 Log.d("VNC", "Flag: " + ((Viewer.DisconnectFlags)iterator.next()).name());
                             }
@@ -86,32 +81,19 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
         });
     }
 
-    public Bitmap getFrame() {
-        if(updated) {
-            updated = false;
-            return frame;
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public void serverFbSizeChanged(Viewer viewer, int w, int h) {
-        Log.e("VNC", "serverFbSizeChanged");
         frame = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         frame.setHasAlpha(false);
         try {
             viewer.setViewerFb(null, PixelFormat.bgr888(), w, h, 0);
-            Log.e("VNC", "Biene");
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
-        Log.e("VNC", "serverFbSizeChanged finished");
     }
 
     @Override
     public void viewerFbUpdated(Viewer viewer, int x, int y, int w, int h) {
-        Log.e("VNC", "viewerFbUpdated");
         if(frame != null) {
             try {
                 viewer.getViewerFbData(x, y, w, h, frame, x, y);
@@ -120,7 +102,16 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
             }
         }
         updated = true;
-        Log.e("VNC", "viewerFbUpdated finished");
+    }
+
+    public Bitmap getFrame() {
+        if(updated) {
+            updated = false;
+            return frame;
+            //return frame.copy(frame.getConfig(), false);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -130,8 +121,6 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
 
     @Override
     public void requestUserCredentials(final Viewer viewer, boolean needUser, boolean needPassword) {
-        Log.d("VNC", "needUser: " + needUser);
-        Log.d("VNC", "needPassword: " + needPassword);
         SdkThread.getInstance().post(new Runnable() {
             @Override
             public void run() {
@@ -145,14 +134,10 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     }
 
     @Override
-    public void cancelUserCredentialsRequest(Viewer viewer) {
-        Log.d("VNC", "HELLOUUUUUUUUUUU: cancelUserCredentialsRequest");
-    }
-
+    public void cancelUserCredentialsRequest(Viewer viewer) {}
 
     @Override
     public void verifyPeer(final Viewer viewer, final String hexFingerprint, final String catchphraseFingerprint, ImmutableDataBuffer serverRsaPublic) {
-        Log.d("VNC", "HELLOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
         SdkThread.getInstance().post(new Runnable() {
             @Override
             public void run() {
@@ -166,7 +151,5 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     }
 
     @Override
-    public void cancelPeerVerification(Viewer viewer) {
-        Log.d("VNC", "HELLOUUUUUUUUUUU: cancelPeerVerification");
-    }
+    public void cancelPeerVerification(Viewer viewer) {}
 }

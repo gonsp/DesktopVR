@@ -1,19 +1,17 @@
 package gonmolon.desktopvr.vr;
 
 
-import android.graphics.Color;
 import android.util.Log;
 
 public class WindowContent extends Element {
 
     public WindowContent(Window parent, float width, float height) {
         super(parent, width, height);
-        setBackgroundColor(Color.BLUE);
     }
 
     @Override
     public void onClick() {
-        Log.d("WindowContent", "Click registred!");
+        Log.d("WindowContent", "Click registered!");
     }
 
     @Override
