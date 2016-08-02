@@ -1,21 +1,15 @@
 package gonmolon.desktopvr.vr;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.util.Log;
-
-import org.rajawali3d.BufferInfo;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.Texture;
 import org.rajawali3d.primitives.Plane;
-import org.w3c.dom.Text;
 
 public abstract class Element extends Plane implements VRListener {
 
     protected float width;
     protected float height;
-    private Material material;
+    protected Material material;
 
     private boolean clickable;
     private boolean focusable;
@@ -47,27 +41,19 @@ public abstract class Element extends Plane implements VRListener {
         setTransparent(false);
     }
 
-    private void setTexture(Texture texture, boolean transparent) {
+    public void setImage(int res, boolean transparent) {
         try {
-            for(ATexture aTexture : material.getTextureList()) {
-                material.removeTexture(aTexture);
+            if(material.getTextureList().size() > 0) {
+                for(ATexture aTexture : material.getTextureList()) {
+                    material.removeTexture(aTexture);
+                }
             }
-            material.addTexture(texture);
+            material.addTexture(new Texture("image", res));
             material.setColorInfluence(0);
             setTransparent(transparent);
         } catch (ATexture.TextureException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setImage(Bitmap bitmap, boolean transparent) {
-        if(bitmap != null) {
-            setTexture(new Texture("image", bitmap), transparent);
-        }
-    }
-
-    public void setImage(int res, boolean transparent) {
-        setTexture(new Texture("image", res), transparent);
     }
 
     public float getWidth() {

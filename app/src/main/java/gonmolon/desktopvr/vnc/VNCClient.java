@@ -19,7 +19,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     private Viewer viewer;
     private DirectTcpConnector connector;
     private Bitmap frame;
-    private boolean updated;
+    private volatile boolean updated;
 
     public VNCClient(Context context, String ipAddress) {
         updated = false;

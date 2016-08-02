@@ -48,7 +48,7 @@ public class WindowManager {
             Window window = new Window(this, 8, 5, PID);
             window.setAngularPosition(90, 0, 5);
             windows.put(PID, window);
-            window.updateContent(frameProvider.getFrame(window.getPID()));
+            window.updateFrame(frameProvider.getFrame(window.getPID()));
         }
     }
 
@@ -78,7 +78,7 @@ public class WindowManager {
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
-                window.updateContent(frameProvider.getFrame(window.getPID()));
+                window.updateFrame(frameProvider.getFrame(window.getPID()));
                 return true;
             }
         }

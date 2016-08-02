@@ -1,7 +1,6 @@
 package gonmolon.desktopvr.vr;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class Window extends ParentLayout {
 
@@ -23,6 +22,10 @@ public class Window extends ParentLayout {
         };
     }
 
+    public void updateFrame(Bitmap frame) {
+        content.updateFrame(frame);
+    }
+
     public void close() {
         try {
             windowManager.removeWindow(PID);
@@ -33,9 +36,5 @@ public class Window extends ParentLayout {
 
     public int getPID() {
         return PID;
-    }
-
-    public void updateContent(Bitmap frame) {
-        content.setImage(frame, false);
     }
 }
