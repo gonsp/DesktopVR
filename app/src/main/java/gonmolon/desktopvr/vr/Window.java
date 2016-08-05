@@ -2,7 +2,7 @@ package gonmolon.desktopvr.vr;
 
 import android.graphics.Bitmap;
 
-public class Window extends ParentLayout {
+public final class Window extends ParentLayout {
 
     private WindowManager windowManager;
     private int PID;
@@ -14,16 +14,15 @@ public class Window extends ParentLayout {
         this.windowManager = windowManager;
         this.PID = PID;
         menu = new Menu(this);
-        content = new WindowContent(this, width, height-Menu.HEIGHT) {
-            @Override
-            public void onClick() {
-                windowManager.setWindowFocused(PID);
-            }
-        };
+        content = new WindowContent(this, width, height-Menu.HEIGHT);
     }
 
     public void updateFrame(Bitmap frame) {
         content.updateFrame(frame);
+    }
+
+    public void focus() {
+        windowManager.setWindowFocused(PID);
     }
 
     public void close() {

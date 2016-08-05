@@ -3,18 +3,10 @@ package gonmolon.desktopvr.vr;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import gonmolon.desktopvr.vnc.FrameProvider;
 import gonmolon.desktopvr.vnc.Utils;
 import gonmolon.desktopvr.vnc.VNCClient;
 
@@ -22,7 +14,7 @@ public class WindowManager {
 
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
-    private FrameProvider frameProvider;
+    private VNCClient vncClient;
     private String ipAddress;
     private final String tcpPort = "8080";
     private WindowListProvider windowListProvider;
@@ -31,7 +23,7 @@ public class WindowManager {
         this.renderer = renderer;
         this.ipAddress = ipAddress;
         windows = new HashMap<>();
-        frameProvider = new FrameProvider(renderer.getContext(), ipAddress);
+        vncClient = new VNCClient(renderer.getContext(), ipAddress);
         windowListProvider = new WindowListProvider();
     }
 
@@ -48,7 +40,6 @@ public class WindowManager {
             Window window = new Window(this, 8, 5, PID);
             window.setAngularPosition(90, 0, 5);
             windows.put(PID, window);
-            window.updateFrame(frameProvider.getFrame(window.getPID()));
         }
     }
 
@@ -78,7 +69,7 @@ public class WindowManager {
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
-                window.updateFrame(frameProvider.getFrame(window.getPID()));
+                vncClient.focusWindow(window);
                 return true;
             }
         }
@@ -193,11 +184,7 @@ public class WindowManager {
                         }
                         refresh();
                     }
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Thread.sleep(1000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

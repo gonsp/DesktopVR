@@ -3,7 +3,6 @@ package gonmolon.desktopvr.vnc;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.view.View;
 
 import com.realvnc.vncsdk.DirectTcpConnector;
 import com.realvnc.vncsdk.ImmutableDataBuffer;
@@ -14,31 +13,35 @@ import com.realvnc.vncsdk.Viewer;
 import java.util.EnumSet;
 import java.util.Iterator;
 
+import gonmolon.desktopvr.vr.Window;
+
 public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback, Viewer.AuthenticationCallback, Viewer.PeerVerificationCallback {
+
+    private String ipAddress;
+    private final String WINDOW_MANAGER_PORT = "8080";
+    private final int VNC_SERVER_PORT = 5900;
+
+    private volatile Window focused;
 
     private Viewer viewer;
     private DirectTcpConnector connector;
     private Bitmap frame;
-    private volatile boolean updated;
 
     public VNCClient(Context context, String ipAddress) {
-        updated = false;
+        this.ipAddress = ipAddress;
         SdkThread.getInstance().init(context.getFilesDir().getAbsolutePath() + "dataStore", this);
         try {
             viewer = new Viewer();
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
-        connect(ipAddress);
+        connect();
     }
 
-    private void connect(final String ipAddress) {
-        final int tcpPort = 5900;
-
-        if (!SdkThread.getInstance().initComplete()) {
+    private void connect() {
+        if(!SdkThread.getInstance().initComplete()) {
             return;
         }
-
         SdkThread.getInstance().post(new Runnable() {
             @Override
             public void run() {
@@ -72,7 +75,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
                     VNCClient.this.serverFbSizeChanged(viewer, 1024, 768);
 
                     connector = new DirectTcpConnector();
-                    connector.connect(ipAddress, tcpPort, viewer.getConnectionHandler());
+                    connector.connect(ipAddress, VNC_SERVER_PORT, viewer.getConnectionHandler());
                 } catch (Library.VncException e) {
                     Log.e("VNC", "Exception in connection");
                     e.printStackTrace();
@@ -82,35 +85,37 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     }
 
     @Override
-    public void serverFbSizeChanged(Viewer viewer, int w, int h) {
-        frame = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+    public void serverFbSizeChanged(Viewer viewer, int width, int height) {
+        Log.d("VNC", "Server size: " + width + ", " + height);
+        frame = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         frame.setHasAlpha(false);
         try {
-            viewer.setViewerFb(null, PixelFormat.bgr888(), w, h, 0);
+            viewer.setViewerFb(null, PixelFormat.bgr888(), width, height, 0);
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void viewerFbUpdated(Viewer viewer, int x, int y, int w, int h) {
-        if(frame != null) {
+    public void viewerFbUpdated(Viewer viewer, int x, int y, int width, int height) {
+        if(frame != null && focused != null) {
             try {
-                viewer.getViewerFbData(x, y, w, h, frame, x, y);
+                viewer.getViewerFbData(x, y, width, height, frame, x, y);
+                focused.updateFrame(frame);
             } catch (Library.VncException e) {
                 e.printStackTrace();
             }
         }
-        updated = true;
     }
 
-    public Bitmap getFrame() {
-        if(updated) {
-            updated = false;
-            return frame;
-            //return frame.copy(frame.getConfig(), false);
-        } else {
-            return null;
+    public void focusWindow(Window newFocus) {
+        if(focused == null || focused.getPID() != newFocus.getPID()) {
+            focused = newFocus;
+            try {
+                Utils.GET(ipAddress, WINDOW_MANAGER_PORT, "focus/" + focused.getPID());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

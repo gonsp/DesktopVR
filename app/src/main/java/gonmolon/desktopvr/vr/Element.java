@@ -9,6 +9,7 @@ public abstract class Element extends Plane implements VRListener {
 
     protected float width;
     protected float height;
+    protected Layout parent;
     protected Material material;
 
     private boolean clickable;
@@ -21,18 +22,21 @@ public abstract class Element extends Plane implements VRListener {
 
         this.width = width;
         this.height = height;
+        parent = null;
 
         startLooking = -1;
         setClickable(true);
 
         material = new Material();
         material.enableLighting(false);
+        material.setColorInfluence(0);
         setMaterial(material);
     }
 
     public Element(Layout parent, float width, float height) {
         this(width, height);
-        parent.addChild(this);
+        this.parent = parent;
+        this.parent.addChild(this);
     }
 
     public void setBackgroundColor(int color) {
