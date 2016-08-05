@@ -29,4 +29,15 @@ public class MainActivity extends GvrActivity {
     public void onCardboardTrigger() {
         renderer.onCardboardTrigger();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        renderer.close();
+        super.onDestroy();
+    }
 }

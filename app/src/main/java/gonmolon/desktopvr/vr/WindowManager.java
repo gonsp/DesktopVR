@@ -124,6 +124,10 @@ public class WindowManager {
         }
     }
 
+    public void close() {
+        windowListProvider.disconnec();
+    }
+
     public class WindowsIterator implements Iterator {
 
         private Iterator<Map.Entry<Integer, Window>> iterator;
@@ -150,7 +154,7 @@ public class WindowManager {
 
     public class WindowListProvider extends AsyncTask<Void, Void, Void> {
 
-        private boolean connected;
+        private volatile boolean connected;
 
         public WindowListProvider() {
             execute((Void[]) null);
@@ -180,7 +184,9 @@ public class WindowManager {
                             int pid = Integer.valueOf(PID);
                             try {
                                 WindowManager.this.addWindow(pid);
-                            } catch (WindowManagerException e) {}
+                            } catch (WindowManagerException e) {
+                                e.printStackTrace();
+                            }
                         }
                         refresh();
                     }
@@ -190,6 +196,10 @@ public class WindowManager {
                 }
             }
             return null;
+        }
+
+        public void disconnec() {
+            connected = false;
         }
     }
 }
