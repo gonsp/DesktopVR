@@ -20,7 +20,7 @@ public class Menu extends Layout {
 
         closeButton.setVRListener(new VRListenerAdapter() {
             @Override
-            public void onClick() {
+            public void onClick(double x, double y) {
                 window.close();
             }
         });

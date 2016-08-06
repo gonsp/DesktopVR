@@ -26,7 +26,7 @@ public class OptionsBox extends ParentLayout {
 
         closeButton.setVRListener(new VRListenerAdapter() {
             @Override
-            public void onClick() {
+            public void onClick(double x, double y) {
                 renderer.close();
             }
         });

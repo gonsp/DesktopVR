@@ -127,6 +127,25 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
         return focused;
     }
 
+    public void sendPointerEvent(final int x, final int y, final Viewer.MouseButton button) {
+        SdkThread.getInstance().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EnumSet<Viewer.MouseButton> buttons;
+                    if(button != null) {
+                        buttons = EnumSet.of(button);
+                    } else {
+                        buttons = EnumSet.noneOf(Viewer.MouseButton.class);
+                    }
+                    viewer.sendPointerEvent(x, y, buttons, false);
+                } catch (Library.VncException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @Override
     public void displayMessage(int msgId, String error) {
         Log.e("VNC", error);

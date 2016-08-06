@@ -60,7 +60,7 @@ public class DesktopRenderer extends VRRenderer {
     @Override
     public void onDrawEye(Eye eye) {
         super.onDrawEye(eye);
-        if(eye.getType() == 1) {
+        if(eye.getType() == Eye.Type.LEFT) {
             leftEyePos = getCurrentCamera().getPosition();
         } else {
             rightEyePos = getCurrentCamera().getPosition();
@@ -74,7 +74,7 @@ public class DesktopRenderer extends VRRenderer {
     }
 
     public void onCardboardTrigger() {
-        if(windowManager != null && windowManager.isLookingAt()) {
+        if(windowManager != null) {
             windowManager.setClickAt();
         }
         if(optionsBox != null && optionsBox.isLookingAt()) {

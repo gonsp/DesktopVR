@@ -18,7 +18,7 @@ public final class Window extends ParentLayout {
         pixelsWidth = width;
         pixelsHeight = height;
         menu = new Menu(this);
-        content = new WindowContent(this, width, height);
+        content = new WindowContent(this, width, height, windowManager.getVNCClient());
     }
 
     public void updateFrame(Bitmap frame) {
@@ -27,6 +27,10 @@ public final class Window extends ParentLayout {
 
     public void focus() {
         windowManager.setWindowFocused(PID);
+    }
+
+    public boolean isFocused() {
+        return windowManager.getFocused() == this;
     }
 
     public void close() {

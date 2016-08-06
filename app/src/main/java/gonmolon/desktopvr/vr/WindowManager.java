@@ -12,16 +12,21 @@ import gonmolon.desktopvr.vnc.VNCClient;
 
 public class WindowManager {
 
+    private String ipAddress;
+    private final String tcpPort = "8080";
+
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
     private VNCClient vncClient;
-    private String ipAddress;
-    private final String tcpPort = "8080";
     private WindowListProvider windowListProvider;
+    private volatile Window pointed;
+    private volatile Window focused;
 
     public WindowManager(DesktopRenderer renderer, String ipAddress) {
         this.renderer = renderer;
         this.ipAddress = ipAddress;
+        pointed = null;
+        focused = null;
         windows = new HashMap<>();
         vncClient = new VNCClient(renderer.getContext(), ipAddress);
         windowListProvider = new WindowListProvider();
@@ -47,11 +52,18 @@ public class WindowManager {
         if(PID < 0) {
             throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
         } else if (windows.containsKey(PID)) {
-            if(vncClient.getFocused() == windows.get(PID)) {
+            Window window = windows.get(PID);
+            if(vncClient.getFocused() == window) {
                 vncClient.focusWindow(null);
             }
-            renderer.getCurrentScene().removeChild(windows.get(PID));
+            renderer.getCurrentScene().removeChild(window);
             windows.remove(PID);
+            if(window == focused) {
+                focused = null;
+            }
+            if(window == pointed) {
+                pointed = null;
+            }
         } else {
             throw new WindowManagerException(WindowManagerException.Error.ID_NONEXISTENT);
         }
@@ -72,22 +84,23 @@ public class WindowManager {
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
+                pointed = window;
                 vncClient.focusWindow(window);
                 return true;
             }
         }
+        pointed = null;
         return false;
     }
 
     public void setClickAt() {
-        Iterator i = getIterator();
-        while(i.hasNext()) {
-            Window window = (Window) i.next();
-            if(window.isLookingAt()) {
-                window.setClickAt();
-                return;
-            }
+        if(pointed != null) {
+            pointed.setClickAt();
         }
+    }
+
+    public Window getFocused() {
+        return focused;
     }
 
     public DesktopRenderer getRenderer() {
@@ -110,25 +123,32 @@ public class WindowManager {
     }
 
     public void setWindowFocused(int PID) {
-        Iterator i = getIterator();
-        while(i.hasNext()) {
-            Window window = (Window) i.next();
-            if(window.getPID() != PID && window.getDistancePos() < 10) {
-                window.setAngularPosition(window.getAngle(), window.getHeightPos(), 10);
+        if(focused == null || focused.getPID() != PID) {
+            Iterator i = getIterator();
+            while(i.hasNext()) {
+                Window window = (Window) i.next();
+                if(window.getPID() != PID && window.getDistancePos() < 10) {
+                    window.setAngularPosition(window.getAngle(), window.getHeightPos(), 10);
+                }
             }
-        }
-        try {
-            Window window = getWindow(PID);
-            if(window.getHeightPos() != 0 || window.getDistancePos() > 5) {
-                window.setAngularPosition(window.getAngle(), 0, 5);
+            try {
+                Window window = getWindow(PID);
+                if(window.getHeightPos() != 0 || window.getDistancePos() > 4) {
+                    window.setAngularPosition(window.getAngle(), 0, 4);
+                }
+                focused = window;
+            } catch (WindowManagerException e) {
+                e.printStackTrace();
             }
-        } catch (WindowManagerException e) {
-            e.printStackTrace();
         }
     }
 
     public void close() {
         windowListProvider.disconnec();
+    }
+
+    public VNCClient getVNCClient() {
+        return vncClient;
     }
 
     public class WindowsIterator implements Iterator {

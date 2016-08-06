@@ -2,7 +2,7 @@ package gonmolon.desktopvr.vr;
 
 public interface VRListener {
 
-    void onClick();
+    void onClick(double x, double y);
 
     boolean onLooking(double x, double y);
 

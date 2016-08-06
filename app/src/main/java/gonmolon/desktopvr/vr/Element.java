@@ -17,11 +17,16 @@ public abstract class Element extends Plane implements VRListener {
     private boolean isLookingAt;
     private long startLooking;
 
+    private double lastX;
+    private double lastY;
+
     public Element(float width, float height) {
         super(width, height, 1, 1);
 
         this.width = width;
         this.height = height;
+        lastX = 0;
+        lastY = 0;
         parent = null;
 
         startLooking = -1;
@@ -88,6 +93,8 @@ public abstract class Element extends Plane implements VRListener {
     }
 
     public boolean setLookingAt(boolean isLookingAt, double x, double y) {
+        lastX = x;
+        lastY = y;
         if(!this.isLookingAt && isLookingAt) {
             onStartLooking();
         } else if(this.isLookingAt && !isLookingAt) {
@@ -111,7 +118,7 @@ public abstract class Element extends Plane implements VRListener {
 
     public void setClickAt() {
         if(isClickable()) {
-            onClick();
+            onClick(lastX, lastY);
         }
     }
 
