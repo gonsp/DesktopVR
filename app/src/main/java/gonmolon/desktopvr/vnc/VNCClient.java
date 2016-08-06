@@ -109,14 +109,22 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     }
 
     public void focusWindow(Window newFocus) {
-        if(focused == null || focused.getPID() != newFocus.getPID()) {
-            focused = newFocus;
-            try {
-                Utils.GET(ipAddress, WINDOW_MANAGER_PORT, "focus/" + focused.getPID());
-            } catch (Exception e) {
-                e.printStackTrace();
+        if(newFocus == null) {
+            focused = null;
+        } else {
+            if(focused == null || focused.getPID() != newFocus.getPID()) {
+                focused = newFocus;
+                try {
+                    Utils.GET(ipAddress, WINDOW_MANAGER_PORT, "focus/" + focused.getPID());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
+    }
+
+    public Window getFocused() {
+        return focused;
     }
 
     @Override

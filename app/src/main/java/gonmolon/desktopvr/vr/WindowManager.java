@@ -31,15 +31,15 @@ public class WindowManager {
         return new WindowsIterator(this);
     }
 
-    public void addWindow(int PID) throws WindowManagerException {
+    public Window addWindow(int PID, int width, int height) throws WindowManagerException {
         if(PID < 0) {
             throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
         } else if(windows.containsKey(PID)) {
             throw new WindowManagerException(WindowManagerException.Error.ID_USED);
         } else {
-            Window window = new Window(this, 8, 5, PID);
-            window.setAngularPosition(90, 0, 5);
+            Window window = new Window(this, width, height, PID);
             windows.put(PID, window);
+            return window;
         }
     }
 
@@ -47,6 +47,9 @@ public class WindowManager {
         if(PID < 0) {
             throw new WindowManagerException(WindowManagerException.Error.ID_INVALID);
         } else if (windows.containsKey(PID)) {
+            if(vncClient.getFocused() == windows.get(PID)) {
+                vncClient.focusWindow(null);
+            }
             renderer.getCurrentScene().removeChild(windows.get(PID));
             windows.remove(PID);
         } else {
@@ -173,19 +176,24 @@ public class WindowManager {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Void[] unused) {
             while(connected) {
                 try {
                     String output = Utils.GET(ipAddress, tcpPort, "getWindowList");
                     if(output.length() > 0) {
                         for(String s : output.split("#")) {
-                            String PID = s.split(",")[0];
-                            Log.d("PID", PID);
-                            int pid = Integer.valueOf(PID);
+                            String[] params = s.split(",");
+                            int pid = Integer.valueOf(params[0]);
+                            int width = Integer.valueOf(params[1]);
+                            int height = Integer.valueOf(params[2]);
                             try {
-                                WindowManager.this.addWindow(pid);
+                                WindowManager.this.addWindow(pid, width, height);
                             } catch (WindowManagerException e) {
-                                e.printStackTrace();
+                                Window window = WindowManager.this.getWindow(pid);
+                                if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
+                                    WindowManager.this.removeWindow(pid);
+                                    WindowManager.this.addWindow(pid, width, height);
+                                }
                             }
                         }
                         refresh();

@@ -83,7 +83,9 @@ public class DesktopRenderer extends VRRenderer {
     }
 
     public void close() {
-        windowManager.close();
+        if(windowManager != null) {
+            windowManager.close();
+        }
         ((Activity)getContext()).finish();
     }
 

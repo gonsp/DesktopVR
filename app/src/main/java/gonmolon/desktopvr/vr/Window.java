@@ -6,15 +6,19 @@ public final class Window extends ParentLayout {
 
     private WindowManager windowManager;
     private int PID;
+    private int pixelsWidth;
+    private int pixelsHeight;
     private Menu menu;
     private WindowContent content;
 
-    public Window(final WindowManager windowManager, float width, float height, final int PID) {
-        super(windowManager.getRenderer(), width, height, LayoutParams.VERTICAL);
+    public Window(final WindowManager windowManager, int width, int height, final int PID) {
+        super(windowManager.getRenderer(), (WindowContent.HEIGHT/height)*width, WindowContent.HEIGHT+Menu.HEIGHT, LayoutParams.VERTICAL);
         this.windowManager = windowManager;
         this.PID = PID;
+        pixelsWidth = width;
+        pixelsHeight = height;
         menu = new Menu(this);
-        content = new WindowContent(this, width, height-Menu.HEIGHT);
+        content = new WindowContent(this, width, height);
     }
 
     public void updateFrame(Bitmap frame) {
@@ -35,5 +39,13 @@ public final class Window extends ParentLayout {
 
     public int getPID() {
         return PID;
+    }
+
+    public int getPixelsWidth() {
+        return pixelsWidth;
+    }
+
+    public int getPixelsHeight() {
+        return pixelsHeight;
     }
 }

@@ -11,12 +11,19 @@ import org.rajawali3d.materials.textures.StreamingTexture;
 
 public final class WindowContent extends Element implements StreamingTexture.ISurfaceListener {
 
+    public static final float HEIGHT = 5f;
+
     private StreamingTexture streamingTexture;
     private Surface surface;
+    private int pixelsWidth;
+    private int pixelsHeight;
     private volatile boolean shouldUpdate = false;
 
-    public WindowContent(Window parent, float width, float height) {
-        super(parent, width, height);
+    public WindowContent(Window parent, int pixelsWidth, int pixelsHeight) {
+        super(parent, (WindowContent.HEIGHT/pixelsHeight)*pixelsWidth, WindowContent.HEIGHT);
+
+        this.pixelsWidth = pixelsWidth;
+        this.pixelsHeight = pixelsHeight;
 
         streamingTexture = new StreamingTexture("StreamingTexture", this);
         try {
@@ -38,7 +45,7 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
     @Override
     public void setSurface(Surface surface) {
         this.surface = surface;
-        streamingTexture.getSurfaceTexture().setDefaultBufferSize(1920, 1080);
+        streamingTexture.getSurfaceTexture().setDefaultBufferSize(pixelsWidth, pixelsHeight);
     }
 
     @Override
