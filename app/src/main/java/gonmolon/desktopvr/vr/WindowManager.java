@@ -1,9 +1,10 @@
 package gonmolon.desktopvr.vr;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -11,9 +12,6 @@ import gonmolon.desktopvr.vnc.Utils;
 import gonmolon.desktopvr.vnc.VNCClient;
 
 public class WindowManager implements Pointeable {
-
-    private String ipAddress;
-    private final String tcpPort = "8080";
 
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
@@ -23,8 +21,8 @@ public class WindowManager implements Pointeable {
     private volatile Window focused;
 
     public WindowManager(DesktopRenderer renderer, String ipAddress) {
+        Utils.ipAddress = ipAddress;
         this.renderer = renderer;
-        this.ipAddress = ipAddress;
         pointed = null;
         focused = null;
         windows = new HashMap<>();
@@ -89,7 +87,6 @@ public class WindowManager implements Pointeable {
                     pointed = window;
                     pointing = true;
                     vncClient.focusWindow(window);
-                    Log.d("TEST", ""+pointed.getPID());
                 }
             }
         }
@@ -160,7 +157,7 @@ public class WindowManager implements Pointeable {
     }
 
     public void close() {
-        windowListProvider.disconnec();
+        windowListProvider.disconnect();
     }
 
     public VNCClient getVNCClient() {
@@ -202,8 +199,7 @@ public class WindowManager implements Pointeable {
         @Override
         protected void onPreExecute() {
             try {
-                Utils.GET(ipAddress, tcpPort, "connect");
-                Log.d("PID", "connected");
+                Utils.GET("connect");
                 connected = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -215,7 +211,8 @@ public class WindowManager implements Pointeable {
         protected Void doInBackground(Void[] unused) {
             while(connected) {
                 try {
-                    String output = Utils.GET(ipAddress, tcpPort, "getWindowList");
+                    String output = Utils.GET("getWindowList");
+                    HashSet<Integer> activeWindows = new HashSet<>();
                     if(output.length() > 0) {
                         for(String s : output.split("#")) {
                             String[] params = s.split(",");
@@ -227,10 +224,22 @@ public class WindowManager implements Pointeable {
                             } catch (WindowManagerException e) {
                                 Window window = WindowManager.this.getWindow(pid);
                                 if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
-                                    WindowManager.this.removeWindow(pid);
+                                    window.close();
                                     WindowManager.this.addWindow(pid, width, height);
                                 }
                             }
+                            activeWindows.add(pid);
+                        }
+                        ArrayList<Window> deletedWindows = new ArrayList<>();
+                        Iterator i = getIterator();
+                        while(i.hasNext()) {
+                            Window window = (Window) i.next();
+                            if(!activeWindows.contains(window.getPID())) {
+                                deletedWindows.add(window);
+                            }
+                        }
+                        for(Window window : deletedWindows) {
+                            window.close();
                         }
                         reallocateWindows();
                     }
@@ -242,7 +251,7 @@ public class WindowManager implements Pointeable {
             return null;
         }
 
-        public void disconnec() {
+        public void disconnect() {
             connected = false;
         }
     }

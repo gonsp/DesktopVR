@@ -7,7 +7,10 @@ import java.net.URL;
 
 public final class Utils {
 
-    public static String GET(String ipAddress, String tcpPort, String endpoint) throws Exception {
+    public static String ipAddress = "";
+    private static String tcpPort = "8080";
+
+    public static String GET(String endpoint) throws Exception {
         URL url = new URL("http://" + ipAddress + ":" + tcpPort + "/" + endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -26,5 +29,18 @@ public final class Utils {
         connection.disconnect();
 
         return output;
+    }
+
+    public static void POST(final String endpoint) {
+        new Thread(new Runnable() {
+            @Override
+            public void run () {
+                try {
+                    GET(endpoint);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }

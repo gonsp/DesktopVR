@@ -17,10 +17,6 @@ import gonmolon.desktopvr.vr.Window;
 
 public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback, Viewer.AuthenticationCallback, Viewer.PeerVerificationCallback {
 
-    private String ipAddress;
-    private static final String WINDOW_MANAGER_PORT = "8080";
-    private static final int VNC_SERVER_PORT = 5900;
-
     private volatile Window focused;
     private volatile long lockUntil = -1;
     private static int BLOCKING_TIME = 350;
@@ -30,17 +26,16 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
     private Bitmap frame;
 
     public VNCClient(Context context, String ipAddress) {
-        this.ipAddress = ipAddress;
         SdkThread.getInstance().init(context.getFilesDir().getAbsolutePath() + "dataStore", this);
         try {
             viewer = new Viewer();
         } catch (Library.VncException e) {
             e.printStackTrace();
         }
-        connect();
+        connect(ipAddress);
     }
 
-    private void connect() {
+    private void connect(final String ipAddress) {
         if(!SdkThread.getInstance().initComplete()) {
             return;
         }
@@ -77,7 +72,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
                     VNCClient.this.serverFbSizeChanged(viewer, 1024, 768);
 
                     connector = new DirectTcpConnector();
-                    connector.connect(ipAddress, VNC_SERVER_PORT, viewer.getConnectionHandler());
+                    connector.connect(ipAddress, 5900, viewer.getConnectionHandler());
                 } catch (Library.VncException e) {
                     Log.e("VNC", "Exception in connection");
                     e.printStackTrace();
@@ -119,11 +114,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
             if(focused == null || focused.getPID() != newFocus.getPID()) {
                 lockUntil = System.currentTimeMillis()+BLOCKING_TIME;
                 focused = newFocus;
-                try {
-                    Utils.GET(ipAddress, WINDOW_MANAGER_PORT, "focus/" + focused.getPID());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Utils.POST("focus/" + focused.getPID());
             }
         }
     }
