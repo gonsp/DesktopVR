@@ -3,6 +3,8 @@ package gonmolon.desktopvr.vr;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 
@@ -20,6 +22,7 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
     private VNCClient vncClient;
     private StreamingTexture streamingTexture;
     private Surface surface;
+
     private int pixelsWidth;
     private int pixelsHeight;
     private volatile boolean shouldUpdate = false;
@@ -48,20 +51,16 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
         }
     }
 
-    @Override
-    public void setSurface(Surface surface) {
-        this.surface = surface;
-        streamingTexture.getSurfaceTexture().setDefaultBufferSize(pixelsWidth, pixelsHeight);
+    public void refresh() {
+        if(shouldUpdate) {
+            streamingTexture.update();
+            shouldUpdate = false;
+        }
     }
 
     @Override
     public void onLooking(double x, double y) {
         sendPointerEvent(x, y, null);
-
-        if(shouldUpdate) {
-            streamingTexture.update();
-            shouldUpdate = false;
-        }
     }
 
     @Override
@@ -90,6 +89,12 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
     @Override
     public void onLongLooking() {
         Log.d("WindowContent", "Long looking");
+    }
+
+    @Override
+    public void setSurface(Surface surface) {
+        this.surface = surface;
+        streamingTexture.getSurfaceTexture().setDefaultBufferSize(pixelsWidth, pixelsHeight);
     }
 
     private void sendPointerEvent(double x, double y, Viewer.MouseButton button) {

@@ -25,6 +25,10 @@ public final class Window extends ParentLayout {
         content.updateFrame(frame);
     }
 
+    public void refresh() {
+        content.refresh();
+    }
+
     public void focus() {
         windowManager.focusWindow(PID);
     }

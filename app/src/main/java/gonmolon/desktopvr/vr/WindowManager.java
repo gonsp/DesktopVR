@@ -56,14 +56,14 @@ public class WindowManager implements Pointeable {
             if(vncClient.getFocused() == window) {
                 vncClient.focusWindow(null);
             }
-            renderer.getCurrentScene().removeChild(window);
-            windows.remove(PID);
             if(window == focused) {
                 focused = null;
             }
             if(window == pointed) {
                 pointed = null;
             }
+            renderer.getCurrentScene().removeChild(window);
+            windows.remove(PID);
         } else {
             throw new WindowManagerException(WindowManagerException.Error.ID_NONEXISTENT);
         }
@@ -89,12 +89,14 @@ public class WindowManager implements Pointeable {
                     pointed = window;
                     pointing = true;
                     vncClient.focusWindow(window);
+                    Log.d("TEST", ""+pointed.getPID());
                 }
             }
         }
         if(!pointing) {
             pointed = null;
         }
+        vncClient.refresh();
         return pointing;
     }
 

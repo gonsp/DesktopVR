@@ -18,10 +18,12 @@ import gonmolon.desktopvr.vr.Window;
 public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback, Viewer.AuthenticationCallback, Viewer.PeerVerificationCallback {
 
     private String ipAddress;
-    private final String WINDOW_MANAGER_PORT = "8080";
-    private final int VNC_SERVER_PORT = 5900;
+    private static final String WINDOW_MANAGER_PORT = "8080";
+    private static final int VNC_SERVER_PORT = 5900;
 
     private volatile Window focused;
+    private volatile long lockUntil = -1;
+    private static int BLOCKING_TIME = 350;
 
     private Viewer viewer;
     private DirectTcpConnector connector;
@@ -101,7 +103,9 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
         if(frame != null && focused != null) {
             try {
                 viewer.getViewerFbData(x, y, width, height, frame, x, y);
-                focused.updateFrame(frame);
+                if(lockUntil < System.currentTimeMillis()) {
+                    focused.updateFrame(frame);
+                }
             } catch (Library.VncException e) {
                 e.printStackTrace();
             }
@@ -113,6 +117,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
             focused = null;
         } else {
             if(focused == null || focused.getPID() != newFocus.getPID()) {
+                lockUntil = System.currentTimeMillis()+BLOCKING_TIME;
                 focused = newFocus;
                 try {
                     Utils.GET(ipAddress, WINDOW_MANAGER_PORT, "focus/" + focused.getPID());
@@ -125,6 +130,12 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
 
     public Window getFocused() {
         return focused;
+    }
+
+    public void refresh() {
+        if(focused != null) {
+            focused.refresh();
+        }
     }
 
     public void sendPointerEvent(final int x, final int y, final Viewer.MouseButton button) {
