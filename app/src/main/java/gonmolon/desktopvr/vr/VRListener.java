@@ -4,7 +4,7 @@ public interface VRListener {
 
     void onClick(double x, double y);
 
-    boolean onLooking(double x, double y);
+    void onLooking(double x, double y);
 
     void onStartLooking();
 

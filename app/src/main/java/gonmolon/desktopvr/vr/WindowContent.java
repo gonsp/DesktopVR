@@ -55,14 +55,15 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
     }
 
     @Override
-    public boolean onLooking(double x, double y) {
+    public void onLooking(double x, double y) {
+        Log.d("BUG", ""+((Window)parent).getPID());
+
         sendPointerEvent(x, y, null);
 
         if(shouldUpdate) {
             streamingTexture.update();
             shouldUpdate = false;
         }
-        return super.onLooking(x, y);
     }
 
     @Override
@@ -71,6 +72,11 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
             sendPointerEvent(x, y, Viewer.MouseButton.MOUSE_BUTTON_LEFT);
         }
         ((Window) parent).focus();
+    }
+
+    @Override
+    public GazePointer.PointerStatus getPointerAction() {
+        return GazePointer.PointerStatus.INVISIBLE;
     }
 
     @Override

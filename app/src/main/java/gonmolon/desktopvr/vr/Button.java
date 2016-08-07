@@ -32,11 +32,10 @@ public class Button extends Element implements VRListener {
     }
 
     @Override
-    public boolean onLooking(double x, double y) {
+    public void onLooking(double x, double y) {
         if(listener != null) {
-            return listener.onLooking(x, y);
+            listener.onLooking(x, y);
         }
-        return false;
     }
 
     @Override
@@ -62,5 +61,10 @@ public class Button extends Element implements VRListener {
         if(listener != null) {
             listener.onLongLooking();
         }
+    }
+
+    @Override
+    public GazePointer.PointerStatus getPointerAction() {
+        return GazePointer.PointerStatus.CLICKABLE;
     }
 }

@@ -26,7 +26,7 @@ public final class Window extends ParentLayout {
     }
 
     public void focus() {
-        windowManager.setWindowFocused(PID);
+        windowManager.focusWindow(PID);
     }
 
     public boolean isFocused() {

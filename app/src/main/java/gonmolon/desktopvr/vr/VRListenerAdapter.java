@@ -3,9 +3,7 @@ package gonmolon.desktopvr.vr;
 public abstract class VRListenerAdapter implements VRListener {
 
     @Override
-    public boolean onLooking(double x, double y) {
-        return true;
-    }
+    public void onLooking(double x, double y) {}
 
     @Override
     public void onStartLooking() {}

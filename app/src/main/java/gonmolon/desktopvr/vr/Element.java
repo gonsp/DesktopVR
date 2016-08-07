@@ -5,7 +5,7 @@ import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.Texture;
 import org.rajawali3d.primitives.Plane;
 
-public abstract class Element extends Plane implements VRListener {
+public abstract class Element extends Plane implements VRListener, Pointeable {
 
     protected float width;
     protected float height;
@@ -13,7 +13,6 @@ public abstract class Element extends Plane implements VRListener {
     protected Material material;
 
     private boolean clickable;
-    private boolean focusable;
     private boolean isLookingAt;
     private long startLooking;
 
@@ -79,20 +78,9 @@ public abstract class Element extends Plane implements VRListener {
 
     public void setClickable(boolean clickable) {
         this.clickable = clickable;
-        if(clickable) {
-            setFocusable(true);
-        }
     }
 
-    public boolean isFocusable() {
-        return focusable;
-    }
-
-    public void setFocusable(boolean focusable) {
-        this.focusable = focusable;
-    }
-
-    public boolean setLookingAt(boolean isLookingAt, double x, double y) {
+    public void setLookingAt(boolean isLookingAt, double x, double y) {
         lastX = x;
         lastY = y;
         if(!this.isLookingAt && isLookingAt) {
@@ -111,19 +99,13 @@ public abstract class Element extends Plane implements VRListener {
                 onLongLooking();
                 startLooking = 0;
             }
-            return onLooking(x, y);
+            onLooking(x, y);
         }
-        return false;
     }
 
     public void setClickAt() {
         if(isClickable()) {
             onClick(lastX, lastY);
         }
-    }
-
-    @Override
-    public boolean onLooking(double x, double y) {
-        return focusable;
     }
 }

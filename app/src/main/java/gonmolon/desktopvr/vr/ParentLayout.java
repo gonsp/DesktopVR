@@ -1,5 +1,7 @@
 package gonmolon.desktopvr.vr;
 
+import android.util.Log;
+
 import org.rajawali3d.math.vector.Vector3;
 
 public abstract class ParentLayout extends Layout {
@@ -28,7 +30,9 @@ public abstract class ParentLayout extends Layout {
         Vector3 intersection = cameraPos.add(cameraDir.multiply(t));
         intersection.subtract(layoutPos);
         Vector3 relativePosition = transformPosition(intersection);
-        return setLookingAt(t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2, -relativePosition.x, relativePosition.y);
+        boolean isLookingAt = t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2;
+        setLookingAt(isLookingAt, -relativePosition.x, relativePosition.y);
+        return isLookingAt;
     }
 
     private Vector3 getDir() {

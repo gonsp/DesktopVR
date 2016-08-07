@@ -28,10 +28,10 @@ public class Layout extends Element {
     @Override
     public void setBackgroundColor(int color) {
         if(background == null) {
-            background = new LayoutBackground(this, color);
-            super.addChild(background);
-            background.setPosition(0, 0, -0.1f);
+            background = new LayoutBackground(this);
+            //super.addChild(background);
         }
+        background.setColor(color);
     }
 
     public void addChild(Element element) {
@@ -64,23 +64,31 @@ public class Layout extends Element {
     }
 
     @Override
-    public boolean onLooking(double x, double y) {
-        boolean focus = false;
+    public void onLooking(double x, double y) {
         Element element = getElementIn(x, y);
         if(element != null) {
-            focus = element.setLookingAt(true, x - element.getPosition().x, y - element.getPosition().y);
+            element.setLookingAt(true, x - element.getPosition().x, y - element.getPosition().y);
         }
         if(childFocused != null && (element == null || element != childFocused)) {
             childFocused.setLookingAt(false, 0, 0);
         }
         childFocused = element;
-        return focus;
     }
 
     @Override
     public void onStopLooking() {
         if(childFocused != null) {
             childFocused.setLookingAt(false, 0, 0);
+            childFocused = null;
+        }
+    }
+
+    @Override
+    public GazePointer.PointerStatus getPointerAction() {
+        if(childFocused != null) {
+            return childFocused.getPointerAction();
+        } else {
+            return GazePointer.PointerStatus.NORMAL;
         }
     }
 
@@ -97,14 +105,22 @@ public class Layout extends Element {
     protected class LayoutBackground extends Element {
 
         protected LayoutBackground(Layout layout, int color) {
-            super(layout.width, layout.height);
+            this(layout);
             setBackgroundColor(color);
+        }
+
+        protected LayoutBackground(Layout layout) {
+            super(layout.width, layout.height);
+            Layout.super.addChild(this);
+            background.setPosition(0, 0, -0.1f);
             setClickable(false);
-            setFocusable(false);
         }
 
         @Override
         public void onClick(double x, double y) {}
+
+        @Override
+        public void onLooking(double x, double y) {}
 
         @Override
         public void onStartLooking() {}
@@ -114,5 +130,10 @@ public class Layout extends Element {
 
         @Override
         public void onLongLooking() {}
+
+        @Override
+        public GazePointer.PointerStatus getPointerAction() {
+            return GazePointer.PointerStatus.NORMAL;
+        }
     }
 }

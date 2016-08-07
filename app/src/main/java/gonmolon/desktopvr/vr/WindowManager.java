@@ -10,7 +10,7 @@ import java.util.Map;
 import gonmolon.desktopvr.vnc.Utils;
 import gonmolon.desktopvr.vnc.VNCClient;
 
-public class WindowManager {
+public class WindowManager implements Pointeable {
 
     private String ipAddress;
     private final String tcpPort = "8080";
@@ -79,7 +79,7 @@ public class WindowManager {
         }
     }
 
-    public boolean isLookingAt() {
+    public boolean refresh() {
         Iterator i = getIterator();
         while(i.hasNext()) {
             Window window = (Window) i.next();
@@ -91,6 +91,15 @@ public class WindowManager {
         }
         pointed = null;
         return false;
+    }
+
+    @Override
+    public GazePointer.PointerStatus getPointerAction() {
+        if(pointed != null) {
+            return pointed.getPointerAction();
+        } else {
+            return GazePointer.PointerStatus.NORMAL;
+        }
     }
 
     public void setClickAt() {
@@ -111,7 +120,7 @@ public class WindowManager {
 
     }
 
-    public void refresh() {
+    public void reallocateWindows() {
         double rad = 0;
         final double incr = 360/windows.size();
         Iterator i = getIterator();
@@ -122,7 +131,7 @@ public class WindowManager {
         }
     }
 
-    public void setWindowFocused(int PID) {
+    public void focusWindow(int PID) {
         if(focused == null || focused.getPID() != PID) {
             Iterator i = getIterator();
             while(i.hasNext()) {
@@ -216,7 +225,7 @@ public class WindowManager {
                                 }
                             }
                         }
-                        refresh();
+                        reallocateWindows();
                     }
                     Thread.sleep(1000);
                 } catch (Exception e) {

@@ -53,7 +53,9 @@ public class DesktopRenderer extends VRRenderer {
 
         if(pointer != null) {
             pointer.refresh();
-            pointer.setClickable(windowManager.isLookingAt() || optionsBox.isLookingAt());
+            windowManager.refresh();
+            optionsBox.isLookingAt();
+            pointer.setStatus(windowManager.getPointerAction(), optionsBox.getPointerAction());
         }
     }
 
