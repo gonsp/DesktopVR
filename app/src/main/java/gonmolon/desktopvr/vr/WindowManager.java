@@ -80,17 +80,22 @@ public class WindowManager implements Pointeable {
     }
 
     public boolean refresh() {
+        boolean pointing = false;
         Iterator i = getIterator();
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
-                pointed = window;
-                vncClient.focusWindow(window);
-                return true;
+                if(!pointing) {
+                    pointed = window;
+                    pointing = true;
+                    vncClient.focusWindow(window);
+                }
             }
         }
-        pointed = null;
-        return false;
+        if(!pointing) {
+            pointed = null;
+        }
+        return pointing;
     }
 
     @Override

@@ -56,8 +56,6 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
 
     @Override
     public void onLooking(double x, double y) {
-        Log.d("BUG", ""+((Window)parent).getPID());
-
         sendPointerEvent(x, y, null);
 
         if(shouldUpdate) {
