@@ -19,7 +19,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
 
     private volatile Window focused;
     private volatile long lockUntil = -1;
-    private static int BLOCKING_TIME = 350;
+    private static int BLOCKING_TIME = 300;
 
     private Viewer viewer;
     private DirectTcpConnector connector;
