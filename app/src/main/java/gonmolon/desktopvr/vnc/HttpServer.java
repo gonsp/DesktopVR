@@ -14,30 +14,20 @@ public class HttpServer extends NanoHTTPD {
 
     public HttpServer(int port) {
         super(port);
-        
         endpoints = new HashMap<>();
-
-        addEndpoint(new Endpoint("test") {
-            @Override
-            public void execute(Map<String, String> params) {
-                Log.d("HTTP", params.get("param"));
-            }
-        });
     }
 
     @Override
     public Response serve(IHTTPSession session) {
-        Log.d("HTTP", "New request");
         String uri = session.getUri();
-        Log.d("HTTP", "Endpoint name = " + uri);
         Endpoint endpoint = endpoints.get(uri);
         if(endpoint != null) {
-            Map<String, String> files = new HashMap<String, String>();
+            Map<String, String> map = new HashMap<String, String>();
             Method method = session.getMethod();
             if (Method.PUT.equals(method) || Method.POST.equals(method)) {
                 try {
-                    session.parseBody(files);
-                    endpoint.execute(session.getParms());
+                    session.parseBody(map);
+                    endpoint.execute(map.get("postData"));
                 } catch (IOException | ResponseException e) {
                     e.printStackTrace();
                 }
@@ -61,7 +51,7 @@ public class HttpServer extends NanoHTTPD {
             this.uri = uri;
         }
         
-        public abstract void execute(Map<String, String> params);
+        public abstract void execute(String body);
 
         public String getUri() {
             return uri;

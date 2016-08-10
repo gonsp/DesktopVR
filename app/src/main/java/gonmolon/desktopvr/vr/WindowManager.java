@@ -1,5 +1,6 @@
 package gonmolon.desktopvr.vr;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,10 +28,16 @@ public class WindowManager implements Pointeable {
         windows = new HashMap<>();
         vncClient = new VNCClient(renderer.getContext(), ipAddress);
         windowListProvider = new WindowListProvider();
+        try {
+            windowListProvider.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HttpClient.nonBlockingRequest("connect", null);
     }
 
     public Iterator getIterator() {
-        return windows.entrySet().iterator();
+        return new WindowsIterator(this);
     }
 
     public Window addWindow(int PID, int width, int height) throws WindowManagerException {
@@ -156,11 +163,36 @@ public class WindowManager implements Pointeable {
     }
 
     public void close() {
+        HttpClient.nonBlockingRequest("disconnect", null);
         windowListProvider.stop();
     }
 
     public VNCClient getVNCClient() {
         return vncClient;
+    }
+
+    public class WindowsIterator implements Iterator {
+
+        private Iterator<Map.Entry<Integer, Window>> iterator;
+
+        private WindowsIterator(WindowManager manager) {
+            iterator = manager.windows.entrySet().iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Window next() {
+            return iterator.next().getValue();
+        }
+
+        @Override
+        public void remove() {
+            iterator.remove();
+        }
     }
 
     public class WindowListProvider extends HttpServer {
@@ -171,10 +203,9 @@ public class WindowManager implements Pointeable {
             super(PORT);
             addEndpoint(new Endpoint("updateWindowList") {
                 @Override
-                public void execute(Map<String, String> params) {
-                    String windowList = params.get("windowList");
-                    if(windowList != null) {
-                        updateWindowList(windowList);
+                public void execute(String body) {
+                    if(body != null) {
+                        updateWindowList(body);
                     }
                 }
             });
@@ -189,13 +220,13 @@ public class WindowManager implements Pointeable {
                     int width = Integer.valueOf(windowParams[1]);
                     int height = Integer.valueOf(windowParams[2]);
                     try {
-                        WindowManager.this.addWindow(pid, width, height);
+                        addWindow(pid, width, height);
                     } catch (WindowManagerException e) {
                         try {
-                            Window window = WindowManager.this.getWindow(pid);
+                            Window window = getWindow(pid);
                             if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
                                 window.close();
-                                WindowManager.this.addWindow(pid, width, height);
+                                addWindow(pid, width, height);
                             }
                         } catch (WindowManagerException exception) {
                             exception.printStackTrace();

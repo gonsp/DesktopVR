@@ -114,7 +114,7 @@ public class VNCClient implements Viewer.FramebufferCallback, SdkThread.Callback
             if(focused == null || focused.getPID() != newFocus.getPID()) {
                 lockUntil = System.currentTimeMillis()+BLOCKING_TIME;
                 focused = newFocus;
-                Utils.POST("focus/" + focused.getPID());
+                HttpClient.nonBlockingRequest("focus/" + focused.getPID(), null);
             }
         }
     }
