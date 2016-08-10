@@ -15,6 +15,7 @@ import gonmolon.desktopvr.R;
 public abstract class FloorGenerator {
 
     public static SquareTerrain generate(DesktopRenderer renderer, boolean sky) {
+        renderer.getCurrentCamera().setFarPlane(1000);
         SquareTerrain floor;
         Bitmap bmp = BitmapFactory.decodeResource(renderer.getContext().getResources(), R.drawable.negy);
         try {

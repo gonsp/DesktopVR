@@ -25,6 +25,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
     compile files('libs/vncsdk.jar')
+    compile(
+            [group: 'org.nanohttpd', name: 'nanohttpd', version: '2.3.0'],
+    )
 }
 
 dependencies {
@@ -37,7 +40,4 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-}
-dependencies {
-    compile 'com.firebase:firebase-client-android:2.3.1'
 }

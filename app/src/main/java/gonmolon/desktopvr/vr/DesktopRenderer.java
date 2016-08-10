@@ -30,8 +30,6 @@ public class DesktopRenderer extends VRRenderer {
         leftEyePos = new Vector3(position);
         rightEyePos = new Vector3(position);
 
-        getCurrentCamera().setFarPlane(1000);
-
         FloorGenerator.generate(this, true);
         pointer = new GazePointer(this);
         optionsBox = new OptionsBox(this);

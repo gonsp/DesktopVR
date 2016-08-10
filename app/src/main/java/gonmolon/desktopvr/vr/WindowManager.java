@@ -1,15 +1,13 @@
 package gonmolon.desktopvr.vr;
 
-import android.os.AsyncTask;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import gonmolon.desktopvr.vnc.Utils;
+import gonmolon.desktopvr.vnc.HttpClient;
+import gonmolon.desktopvr.vnc.HttpServer;
 import gonmolon.desktopvr.vnc.VNCClient;
 
 public class WindowManager implements Pointeable {
@@ -22,7 +20,7 @@ public class WindowManager implements Pointeable {
     private volatile Window focused;
 
     public WindowManager(DesktopRenderer renderer, String ipAddress) {
-        Utils.ipAddress = ipAddress;
+        HttpClient.ipAddress = ipAddress;
         this.renderer = renderer;
         pointed = null;
         focused = null;
@@ -32,7 +30,7 @@ public class WindowManager implements Pointeable {
     }
 
     public Iterator getIterator() {
-        return new WindowsIterator(this);
+        return windows.entrySet().iterator();
     }
 
     public Window addWindow(int PID, int width, int height) throws WindowManagerException {
@@ -158,102 +156,66 @@ public class WindowManager implements Pointeable {
     }
 
     public void close() {
-        windowListProvider.disconnect();
+        windowListProvider.stop();
     }
 
     public VNCClient getVNCClient() {
         return vncClient;
     }
 
-    public class WindowsIterator implements Iterator {
+    public class WindowListProvider extends HttpServer {
 
-        private Iterator<Map.Entry<Integer, Window>> iterator;
-
-        private WindowsIterator(WindowManager manager) {
-            iterator = manager.windows.entrySet().iterator();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public Window next() {
-            return iterator.next().getValue();
-        }
-
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
-    }
-
-    public class WindowListProvider extends AsyncTask<Void, Void, Void> {
-
-        private volatile boolean connected;
+        private static final int PORT = 8080;
 
         public WindowListProvider() {
-            execute((Void[]) null);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            try {
-                Utils.GET("connect");
-                connected = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                connected = false;
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void[] unused) {
-            while(connected) {
-                try {
-                    String output = Utils.GET("getWindowList");
-                    HashSet<Integer> activeWindows = new HashSet<>();
-                    if(output.length() > 0) {
-                        for(String s : output.split("#")) {
-                            String[] params = s.split(",");
-                            int pid = Integer.valueOf(params[0]);
-                            int width = Integer.valueOf(params[1]);
-                            int height = Integer.valueOf(params[2]);
-                            try {
-                                WindowManager.this.addWindow(pid, width, height);
-                            } catch (WindowManagerException e) {
-                                Window window = WindowManager.this.getWindow(pid);
-                                if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
-                                    window.close();
-                                    WindowManager.this.addWindow(pid, width, height);
-                                }
-                            }
-                            activeWindows.add(pid);
-                        }
-                        ArrayList<Window> deletedWindows = new ArrayList<>();
-                        Iterator i = getIterator();
-                        while(i.hasNext()) {
-                            Window window = (Window) i.next();
-                            if(!activeWindows.contains(window.getPID())) {
-                                deletedWindows.add(window);
-                            }
-                        }
-                        for(Window window : deletedWindows) {
-                            window.close();
-                        }
-                        reallocateWindows();
+            super(PORT);
+            addEndpoint(new Endpoint("updateWindowList") {
+                @Override
+                public void execute(Map<String, String> params) {
+                    String windowList = params.get("windowList");
+                    if(windowList != null) {
+                        updateWindowList(windowList);
                     }
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-            return null;
+            });
         }
 
-        public void disconnect() {
-            connected = false;
+        private void updateWindowList(String windowList) {
+            HashSet<Integer> activeWindows = new HashSet<>();
+            if(windowList.length() > 0) {
+                for(String s : windowList.split("#")) {
+                    String[] windowParams = s.split(",");
+                    int pid = Integer.valueOf(windowParams[0]);
+                    int width = Integer.valueOf(windowParams[1]);
+                    int height = Integer.valueOf(windowParams[2]);
+                    try {
+                        WindowManager.this.addWindow(pid, width, height);
+                    } catch (WindowManagerException e) {
+                        try {
+                            Window window = WindowManager.this.getWindow(pid);
+                            if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
+                                window.close();
+                                WindowManager.this.addWindow(pid, width, height);
+                            }
+                        } catch (WindowManagerException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    activeWindows.add(pid);
+                }
+                ArrayList<Window> deletedWindows = new ArrayList<>();
+                Iterator i = getIterator();
+                while(i.hasNext()) {
+                    Window window = (Window) i.next();
+                    if(!activeWindows.contains(window.getPID())) {
+                        deletedWindows.add(window);
+                    }
+                }
+                for(Window window : deletedWindows) {
+                    window.close();
+                }
+                reallocateWindows();
+            }
         }
     }
 }

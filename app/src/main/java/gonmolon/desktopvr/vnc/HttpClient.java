@@ -5,12 +5,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public final class Utils {
+public class HttpClient {
 
     public static String ipAddress = "";
     private static String tcpPort = "8080";
 
-    public static String GET(String endpoint) throws Exception {
+    public static String blockingRequest(String endpoint) throws Exception {
         URL url = new URL("http://" + ipAddress + ":" + tcpPort + "/" + endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -31,16 +31,24 @@ public final class Utils {
         return output;
     }
 
-    public static void POST(final String endpoint) {
+    public static void nonBlockingRequest(final String endpoint, final ResultCallback resultCallback) {
         new Thread(new Runnable() {
             @Override
             public void run () {
                 try {
-                    GET(endpoint);
+                    String result = blockingRequest(endpoint);
+                    if(resultCallback != null) {
+                        resultCallback.onResult(result);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public interface ResultCallback {
+
+        void onResult(String result);
     }
 }
