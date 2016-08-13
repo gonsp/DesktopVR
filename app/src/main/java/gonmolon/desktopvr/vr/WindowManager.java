@@ -45,7 +45,7 @@ public class WindowManager implements Pointeable {
         server.addEndpoint(new Endpoint("tap") {
             @Override
             public void execute(String body) {
-                setClickAt();
+                setClickAt(VRListener.ClickType.LEAPMOTION);
             }
         });
         server.addEndpoint(new Endpoint("swipe") {
@@ -145,9 +145,9 @@ public class WindowManager implements Pointeable {
         }
     }
 
-    public void setClickAt() {
+    public void setClickAt(VRListener.ClickType clickType) {
         if(pointed != null) {
-            pointed.setClickAt();
+            pointed.setClickAt(clickType);
         }
     }
 
@@ -245,8 +245,6 @@ public class WindowManager implements Pointeable {
 
     public class WindowListProvider {
 
-        private static final int PORT = 8080;
-
         public WindowListProvider(HttpServer server) {
             server.addEndpoint(new Endpoint("updateWindowList") {
                 @Override
@@ -272,7 +270,7 @@ public class WindowManager implements Pointeable {
                         try {
                             Window window = getWindow(pid);
                             if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
-                                window.close();
+                                removeWindow(pid);
                                 addWindow(pid, width, height);
                             }
                         } catch (WindowManagerException exception) {
@@ -290,7 +288,11 @@ public class WindowManager implements Pointeable {
                     }
                 }
                 for(Window window : deletedWindows) {
-                    window.close();
+                    try {
+                        removeWindow(window.getPID());
+                    } catch (WindowManagerException e) {
+                        e.printStackTrace();
+                    }
                 }
                 reallocateWindows();
             }

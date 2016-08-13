@@ -75,10 +75,10 @@ public class DesktopRenderer extends VRRenderer {
 
     public void onCardboardTrigger() {
         if(windowManager != null) {
-            windowManager.setClickAt();
+            windowManager.setClickAt(VRListener.ClickType.MAGNETIC);
         }
         if(optionsBox != null && optionsBox.isLookingAt()) {
-            optionsBox.setClickAt();
+            optionsBox.setClickAt(VRListener.ClickType.MAGNETIC);
         }
     }
 

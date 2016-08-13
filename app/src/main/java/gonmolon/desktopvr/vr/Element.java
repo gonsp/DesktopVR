@@ -103,9 +103,9 @@ public abstract class Element extends Plane implements VRListener, Pointeable {
         }
     }
 
-    public void setClickAt() {
+    public void setClickAt(ClickType clickType) {
         if(isClickable()) {
-            onClick(lastX, lastY);
+            onClick(lastX, lastY, clickType);
         }
     }
 }

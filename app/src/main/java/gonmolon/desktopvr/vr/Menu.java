@@ -1,7 +1,6 @@
 package gonmolon.desktopvr.vr;
 
 import gonmolon.desktopvr.R;
-import gonmolon.desktopvr.vnc.HttpClient;
 
 public class Menu extends Layout {
 
@@ -21,8 +20,8 @@ public class Menu extends Layout {
 
         closeButton.setVRListener(new VRListenerAdapter() {
             @Override
-            public void onClick(double x, double y) {
-                HttpClient.nonBlockingRequest("close/" + window.getPID(), null);
+            public void onClick(double x, double y, ClickType clickType) {
+                window.close();
             }
         });
     }

@@ -57,9 +57,9 @@ public class Layout extends Element {
     }
 
     @Override
-    public void onClick(double x, double y) {
+    public void onClick(double x, double y, ClickType clickType) {
         if(childFocused != null) {
-            childFocused.setClickAt();
+            childFocused.setClickAt(clickType);
         }
     }
 
@@ -117,7 +117,7 @@ public class Layout extends Element {
         }
 
         @Override
-        public void onClick(double x, double y) {}
+        public void onClick(double x, double y, ClickType clickType) {}
 
         @Override
         public void onLooking(double x, double y) {}

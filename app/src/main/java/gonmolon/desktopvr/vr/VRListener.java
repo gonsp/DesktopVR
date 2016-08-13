@@ -2,7 +2,7 @@ package gonmolon.desktopvr.vr;
 
 public interface VRListener {
 
-    void onClick(double x, double y);
+    void onClick(double x, double y, ClickType type);
 
     void onLooking(double x, double y);
 
@@ -11,4 +11,8 @@ public interface VRListener {
     void onStopLooking();
 
     void onLongLooking();
+
+    enum ClickType {
+        MAGNETIC, LEAPMOTION
+    }
 }

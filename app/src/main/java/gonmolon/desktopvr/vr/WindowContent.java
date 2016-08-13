@@ -64,8 +64,8 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
     }
 
     @Override
-    public void onClick(double x, double y) {
-        if(((Window) parent).isFocused()) {
+    public void onClick(double x, double y, ClickType clickType) {
+        if(((Window) parent).isFocused() || clickType == ClickType.LEAPMOTION) {
             sendPointerEvent(x, y, Viewer.MouseButton.MOUSE_BUTTON_LEFT);
         }
         ((Window) parent).focus();

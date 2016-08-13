@@ -25,9 +25,9 @@ public class Button extends Element implements VRListener {
     }
 
     @Override
-    public void onClick(double x, double y) {
+    public void onClick(double x, double y, ClickType clickType) {
         if(listener != null) {
-            listener.onClick(x, y);
+            listener.onClick(x, y, clickType);
         }
     }
 

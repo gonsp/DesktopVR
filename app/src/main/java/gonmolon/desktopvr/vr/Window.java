@@ -2,6 +2,8 @@ package gonmolon.desktopvr.vr;
 
 import android.graphics.Bitmap;
 
+import gonmolon.desktopvr.vnc.HttpClient;
+
 public final class Window extends ParentLayout {
 
     private WindowManager windowManager;
@@ -38,6 +40,7 @@ public final class Window extends ParentLayout {
     }
 
     public void close() {
+        HttpClient.nonBlockingRequest("close/" + PID, null);
         try {
             windowManager.removeWindow(PID);
         } catch (WindowManagerException e) {
