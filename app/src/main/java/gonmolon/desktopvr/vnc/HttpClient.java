@@ -42,6 +42,9 @@ public class HttpClient {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    if(resultCallback != null) {
+                        resultCallback.onException(e);
+                    }
                 }
             }
         }).start();
@@ -50,5 +53,7 @@ public class HttpClient {
     public interface ResultCallback {
 
         void onResult(String result);
+
+        void onException(Exception e);
     }
 }

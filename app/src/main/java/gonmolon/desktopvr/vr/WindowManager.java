@@ -1,12 +1,19 @@
 package gonmolon.desktopvr.vr;
 
+import android.app.Activity;
+import android.util.Log;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import gonmolon.desktopvr.vnc.Endpoint;
 import gonmolon.desktopvr.vnc.HttpClient;
 import gonmolon.desktopvr.vnc.HttpServer;
 import gonmolon.desktopvr.vnc.VNCClient;
@@ -15,25 +22,51 @@ public class WindowManager implements Pointeable {
 
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
+    private HttpServer server;
     private VNCClient vncClient;
     private WindowListProvider windowListProvider;
     private volatile Window pointed;
     private volatile Window focused;
 
-    public WindowManager(DesktopRenderer renderer, String ipAddress) {
+    public WindowManager(final DesktopRenderer renderer, String ipAddress) {
         HttpClient.ipAddress = ipAddress;
         this.renderer = renderer;
         pointed = null;
         focused = null;
         windows = new HashMap<>();
+        server = new HttpServer(8080, renderer.getContext());
+        setUpServer();
         vncClient = new VNCClient(renderer.getContext(), ipAddress);
-        windowListProvider = new WindowListProvider();
-        try {
-            windowListProvider.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        windowListProvider = new WindowListProvider(server);
         HttpClient.nonBlockingRequest("connect", null);
+    }
+
+    private void setUpServer() {
+        server.addEndpoint(new Endpoint("tap") {
+            @Override
+            public void execute(String body) {
+                setClickAt();
+            }
+        });
+        server.addEndpoint(new Endpoint("swipe") {
+            @Override
+            public void execute(String body) {
+                Log.d("LEAP MOTION", "swipe");
+            }
+        });
+        server.addEndpoint(new Endpoint("move") {
+            @Override
+            public void execute(String body) {
+                if(pointed != null) {
+                    float movement = Float.valueOf(body);
+                    movement = movement/10;
+                    double newDistance = pointed.getDistancePos()+movement;
+                    if(newDistance >= 2 && newDistance < 50) {
+                        pointed.setAngularPosition(pointed.getAngle(), pointed.getHeightPos(), newDistance);
+                    }
+                }
+            }
+        });
     }
 
     public Iterator getIterator() {
@@ -163,8 +196,23 @@ public class WindowManager implements Pointeable {
     }
 
     public void close() {
-        HttpClient.nonBlockingRequest("disconnect", null);
-        windowListProvider.stop();
+        HttpClient.nonBlockingRequest("disconnect", new HttpClient.ResultCallback() {
+            @Override
+            public void onResult(String result) {
+                final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(5);
+                executor.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        server.stop();
+                    }
+                }, 1, TimeUnit.SECONDS);
+            }
+
+            @Override
+            public void onException(Exception e) {
+                server.stop();
+            }
+        });
     }
 
     public VNCClient getVNCClient() {
@@ -195,13 +243,12 @@ public class WindowManager implements Pointeable {
         }
     }
 
-    public class WindowListProvider extends HttpServer {
+    public class WindowListProvider {
 
         private static final int PORT = 8080;
 
-        public WindowListProvider() {
-            super(PORT);
-            addEndpoint(new Endpoint("updateWindowList") {
+        public WindowListProvider(HttpServer server) {
+            server.addEndpoint(new Endpoint("updateWindowList") {
                 @Override
                 public void execute(String body) {
                     if(body != null) {
