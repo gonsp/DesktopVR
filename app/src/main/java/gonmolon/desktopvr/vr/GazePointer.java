@@ -8,7 +8,7 @@ import org.rajawali3d.math.Matrix4;
 import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.primitives.Sphere;
 
-public class GazePointer extends Sphere {
+public class GazePointer extends Sphere implements Renderable {
 
     private static final float SIZE = 0.01f;
 

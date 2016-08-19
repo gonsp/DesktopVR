@@ -1,7 +1,5 @@
 package gonmolon.desktopvr.vr;
 
-import android.util.Log;
-
 import org.rajawali3d.math.vector.Vector3;
 
 public abstract class ParentLayout extends Layout {
@@ -11,6 +9,10 @@ public abstract class ParentLayout extends Layout {
     private double angle;
     private double height_pos;
     private double distance_pos;
+
+    private Vector3 intersection;
+    private double x;
+    private double y;
 
     public ParentLayout(DesktopRenderer renderer, float width, float height, LayoutParams orientation) {
         super(width, height, orientation);
@@ -28,11 +30,20 @@ public abstract class ParentLayout extends Layout {
         Vector3 layoutDir = getDir();
         double t = layoutDir.dot(layoutPos.subtract(cameraPos)) / layoutDir.dot(cameraDir);
         Vector3 intersection = cameraPos.add(cameraDir.multiply(t));
+        this.intersection = new Vector3(intersection);
         intersection.subtract(layoutPos);
         Vector3 relativePosition = transformPosition(intersection);
-        boolean isLookingAt = t >= 0 && relativePosition.x >= -width/2 && relativePosition.x <= width/2 && relativePosition.y >= -height/2 && relativePosition.y <= height/2;
-        setLookingAt(isLookingAt, -relativePosition.x, relativePosition.y);
-        return isLookingAt;
+        x = -relativePosition.x;
+        y = relativePosition.y;
+        return t >= 0 && x >= -width/2 && x <= width/2 && y >= -height/2 && y <= height/2;
+    }
+
+    public Vector3 getIntersection() {
+        return intersection;
+    }
+
+    public void setLookingAt(boolean isLooking) {
+        setLookingAt(isLooking, x, y);
     }
 
     private Vector3 getDir() {

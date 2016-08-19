@@ -72,23 +72,19 @@ public final class WindowContent extends Element implements StreamingTexture.ISu
     }
 
     @Override
+    public void onStartLooking() {
+        vncClient.focusWindow((Window)parent);
+    }
+
+    @Override
+    public void onStopLooking() {}
+
+    @Override
+    public void onLongLooking() {}
+
+    @Override
     public GazePointer.PointerStatus getPointerAction() {
         return GazePointer.PointerStatus.INVISIBLE;
-    }
-
-    @Override
-    public void onStartLooking() {
-        Log.d("WindowContent", "Start looking!");
-    }
-
-    @Override
-    public void onStopLooking() {
-        Log.d("WindowContent", "Stop looking!");
-    }
-
-    @Override
-    public void onLongLooking() {
-        Log.d("WindowContent", "Long looking");
     }
 
     @Override

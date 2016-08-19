@@ -1,16 +1,13 @@
 package gonmolon.desktopvr.vnc;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
-import gonmolon.desktopvr.vr.VRToast;
 
 public class HttpServer extends NanoHTTPD {
     
@@ -36,6 +33,7 @@ public class HttpServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
+        Log.d("HTTP", "New request");
         String uri = session.getUri();
         final Endpoint endpoint = endpoints.get(uri);
         if(endpoint != null) {

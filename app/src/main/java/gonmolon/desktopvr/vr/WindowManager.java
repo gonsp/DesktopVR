@@ -1,10 +1,7 @@
 package gonmolon.desktopvr.vr;
 
-import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +15,7 @@ import gonmolon.desktopvr.vnc.HttpClient;
 import gonmolon.desktopvr.vnc.HttpServer;
 import gonmolon.desktopvr.vnc.VNCClient;
 
-public class WindowManager implements Pointeable {
+public class WindowManager implements Pointeable, Renderable {
 
     private HashMap<Integer, Window> windows;
     private DesktopRenderer renderer;
@@ -116,24 +113,31 @@ public class WindowManager implements Pointeable {
         }
     }
 
-    public boolean refresh() {
-        boolean pointing = false;
+    @Override
+    public void refresh() {
         Iterator i = getIterator();
+        ArrayList<Window> lookingWindows = new ArrayList<>();
         while(i.hasNext()) {
             Window window = (Window) i.next();
             if(window.isLookingAt()) {
-                if(!pointing) {
-                    pointed = window;
-                    pointing = true;
-                    vncClient.focusWindow(window);
-                }
+                lookingWindows.add(window);
+            } else {
+                window.setLookingAt(false);
             }
         }
-        if(!pointing) {
-            pointed = null;
+        pointed = null;
+        double minDistance = -1;
+        for(Window window : lookingWindows) {
+            double distance = window.getIntersection().distanceTo(renderer.position);
+            if(minDistance == -1 || distance < minDistance) {
+                pointed = window;
+                minDistance = distance;
+            }
+        }
+        for(Window window : lookingWindows) {
+            window.setLookingAt(window == pointed);
         }
         vncClient.refresh();
-        return pointing;
     }
 
     @Override
@@ -257,6 +261,7 @@ public class WindowManager implements Pointeable {
         }
 
         private void updateWindowList(String windowList) {
+            Log.d("WTF", windowList);
             HashSet<Integer> activeWindows = new HashSet<>();
             if(windowList.length() > 0) {
                 for(String s : windowList.split("#")) {

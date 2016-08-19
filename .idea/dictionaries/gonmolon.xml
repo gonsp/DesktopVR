@@ -2,6 +2,7 @@
   <dictionary name="gonmolon">
     <words>
       <w>pointeable</w>
+      <w>renderable</w>
     </words>
   </dictionary>
 </component>

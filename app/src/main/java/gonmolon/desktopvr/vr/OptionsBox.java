@@ -4,7 +4,7 @@ import org.rajawali3d.math.vector.Vector3;
 
 import gonmolon.desktopvr.R;
 
-public class OptionsBox extends ParentLayout {
+public class OptionsBox extends ParentLayout implements Renderable {
 
     private static final float HEIGHT = 0.4f;
     private static final float MARGIN = 0.1f;
@@ -34,9 +34,11 @@ public class OptionsBox extends ParentLayout {
         setAngularPosition(90, -3, 3);
     }
 
+    @Override
     public void refresh() {
+        setLookingAt(isLookingAt());
         Vector3 cameraDir = renderer.getCameraDir();
-        if(cameraDir.y < -1) {
+        if(cameraDir.y < -2) {
             setVisible(true);
         } else {
             setVisible(false);
