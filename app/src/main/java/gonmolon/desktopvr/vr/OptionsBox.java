@@ -12,8 +12,12 @@ public class OptionsBox extends ParentLayout implements Renderable {
     private Button closeButton;
     private Button settingsButton;
 
+    private static float getWidth(int elements) {
+        return HEIGHT*elements + MARGIN*(elements-1);
+    }
+
     public OptionsBox(DesktopRenderer desktopRenderer) {
-        super(desktopRenderer, HEIGHT*2 + MARGIN, HEIGHT, LayoutParams.HORIZONTAL);
+        super(desktopRenderer, getWidth(3), HEIGHT, LayoutParams.HORIZONTAL);
 
         closeButton = new Button(this, HEIGHT, HEIGHT);
         closeButton.setFocusZoom(0.5f);

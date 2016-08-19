@@ -2,6 +2,8 @@ package gonmolon.desktopvr.vr;
 
 import android.util.Log;
 
+import org.rajawali3d.math.vector.Vector3;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -261,7 +263,6 @@ public class WindowManager implements Pointeable, Renderable {
         }
 
         private void updateWindowList(String windowList) {
-            Log.d("WTF", windowList);
             HashSet<Integer> activeWindows = new HashSet<>();
             if(windowList.length() > 0) {
                 for(String s : windowList.split("#")) {
@@ -275,8 +276,12 @@ public class WindowManager implements Pointeable, Renderable {
                         try {
                             Window window = getWindow(pid);
                             if(window.getPixelsWidth() != width || window.getPixelsHeight() != height) {
+                                double angle = window.getAngle();
+                                double heightPos = window.getHeightPos();
+                                double distancePos = window.getDistancePos();
                                 removeWindow(pid);
                                 addWindow(pid, width, height);
+                                getWindow(pid).setAngularPosition(angle, heightPos, distancePos);
                             }
                         } catch (WindowManagerException exception) {
                             exception.printStackTrace();

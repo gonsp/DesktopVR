@@ -33,7 +33,6 @@ public class HttpServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        Log.d("HTTP", "New request");
         String uri = session.getUri();
         final Endpoint endpoint = endpoints.get(uri);
         if(endpoint != null) {

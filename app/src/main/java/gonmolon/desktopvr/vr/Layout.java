@@ -112,7 +112,7 @@ public class Layout extends Element {
         protected LayoutBackground(Layout layout) {
             super(layout.width, layout.height);
             Layout.super.addChild(this);
-            background.setPosition(0, 0, -0.1f);
+            setPosition(0, 0, -0.1f);
             setClickable(false);
         }
 
